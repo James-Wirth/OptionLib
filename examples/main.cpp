@@ -3,46 +3,31 @@
 //
 
 #include <iostream>
-#include <iomanip>
-#include <memory>
-#include <vector>
 #include "OptionLib/OptionLib.h"
-
-void calculateAndDisplayPrices(const OptionLib::Option& callOption, const OptionLib::Option& putOption,
-                               const std::string& modelName, const OptionLib::Models::Model& model) {
-    double callPrice = model.price(callOption);
-    double putPrice = model.price(putOption);
-    std::cout << modelName << " | " << callPrice << "       | " << putPrice << '\n';
-}
 
 int main() {
     using namespace OptionLib;
     using namespace OptionLib::Models;
 
-    std::cout << std::fixed << std::setprecision(2);
-
     double spotPrice = 100.0;
-    double strikePrice = 100.0;
-    double timeToExpiry = 1.0;
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    Option callOption(strikePrice, timeToExpiry, OptionType::Call);
-    Option putOption(strikePrice, timeToExpiry, OptionType::Put);
+    auto defaultModel = std::make_shared<BlackScholes>(spotPrice, riskFreeRate, volatility);
+    Portfolio portfolio(defaultModel);
 
-    std::vector<std::pair<std::string, std::unique_ptr<Model>>> models;
-    models.emplace_back("Black-Scholes     ", std::make_unique<BlackScholes>(spotPrice, riskFreeRate, volatility));
-    models.emplace_back("Binomial (10^4)   ", std::make_unique<Binomial>(spotPrice, riskFreeRate, volatility, pow(10, 4)));
-    models.emplace_back("Monte Carlo (10^7)", std::make_unique<MonteCarlo>(spotPrice, riskFreeRate, volatility, pow(10, 7)));
+    auto callOption = std::make_shared<Option>(100, 1.0, OptionType::Call);
+    auto putOption = std::make_shared<Option>(100, 1.0, OptionType::Put);
 
-    std::cout << "\nOption Pricing Comparison:\n";
-    std::cout << "==========================\n";
-    std::cout << "Model             | Call Price | Put Price\n";
-    std::cout << "------------------|------------|-----------\n";
+    portfolio.addOption(callOption);
+    portfolio.addOption(putOption);
 
-    for (const auto& [modelName, model] : models) {
-        calculateAndDisplayPrices(callOption, putOption, modelName, *model);
-    }
+    auto binomialModel = std::make_shared<Binomial>(spotPrice, riskFreeRate, volatility);
+    auto callOption2 = std::make_shared<Option>(100, 1.0, OptionType::Call);
+
+    portfolio.addOption(callOption2, binomialModel); // Uses Binomial model specifically for this option
+
+    std::cout << "Total Portfolio Value: " << portfolio.totalValue() << '\n';
 
     return 0;
 }

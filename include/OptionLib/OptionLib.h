@@ -11,5 +11,6 @@
 #include <OptionLib/models/BlackScholes.h>
 #include <OptionLib/models/MonteCarlo.h>
 #include <OptionLib/models/Binomial.h>
+#include <OptionLib/Portfolio.h>
 
 #endif //OPTIONLIB_H
