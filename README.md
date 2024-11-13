@@ -31,16 +31,19 @@ make
 Here is a simple usage that demonstrates setting up a portfolio with call and put options:
 
 ```cpp
-// Black-Scholes model
-auto defaultModel = std::make_shared<BlackScholes>(spotPrice=100.0,
-                                                   riskFreeRate=0.05,
-                                                   volatility=0.2);
-Portfolio portfolio(defaultModel);
+using namespace OptionLib;
 
-auto callOption = std::make_shared<Option>(strikePrice=100,
-                                           timeToMaturity=1.0,
-                                           type=OptionType::Call);
+// Black-Scholes model with spot 100.0, risk-free rate 0.05
+// and constant volatility 0.2
+auto model = Factory::createModel<BlackScholes>(100.0, 0.05, 0.2);
 
+// Instantiate portfolio with default model type <BlackScholes>
+Portfolio portfolio(model);
+
+// Create a call option with strike 100.0, expiry 1.0
+auto callOption = Factory::createOption(100.0, 1.0, OptionType::Call);
+
+// Add option to the portfolio
 portfolio.addOption(callOption);
 ```
 
