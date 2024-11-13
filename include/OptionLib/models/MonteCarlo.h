@@ -12,13 +12,19 @@ namespace OptionLib::Models {
 
     class MonteCarlo : public Model {
     public:
-        MonteCarlo(double spotPrice, double riskFreeRate, double volatility, int numSimulations = 10000)
+        MonteCarlo(double spotPrice, double riskFreeRate, double volatility, int numSimulations = pow(10, 7))
             : Model(spotPrice, riskFreeRate, volatility), numSimulations(numSimulations) {}
 
         double price(const Option& option) const override;
+        double computeGreek(const Option& option, GreekType greekType) const override;
 
     private:
         int numSimulations;
+        double calculateDelta(const Option& option) const;
+        double calculateGamma(const Option& option) const;
+        double calculateVega(const Option& option) const;
+        double calculateTheta(const Option& option) const;
+        double calculateRho(const Option& option) const;
     };
 
 } // namespace OptionLib::Models

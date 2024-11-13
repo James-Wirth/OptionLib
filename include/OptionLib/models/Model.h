@@ -9,14 +9,23 @@
 
 namespace OptionLib::Models {
 
+    enum class GreekType {
+        Delta,
+        Gamma,
+        Vega,
+        Theta,
+        Rho
+    };
+
     class Model {
     public:
         Model(double spotPrice, double riskFreeRate, double volatility)
             : spotPrice(spotPrice), riskFreeRate(riskFreeRate), volatility(volatility) {}
 
-        virtual ~Model() = default;
+        virtual ~Model();
 
         virtual double price(const Option& option) const = 0;
+        virtual double computeGreek(const Option& option, GreekType type) const = 0;
 
     protected:
         double spotPrice;

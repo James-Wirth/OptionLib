@@ -5,6 +5,18 @@
 #include <iostream>
 #include "OptionLib/OptionLib.h"
 
+// Inline function for converting GreekType to a string
+inline std::string greekTypeName(OptionLib::Models::GreekType greekType) {
+    switch (greekType) {
+        case OptionLib::Models::GreekType::Delta: return "Delta";
+        case OptionLib::Models::GreekType::Gamma: return "Gamma";
+        case OptionLib::Models::GreekType::Vega:  return "Vega";
+        case OptionLib::Models::GreekType::Theta: return "Theta";
+        case OptionLib::Models::GreekType::Rho:   return "Rho";
+        default: return "Unknown";
+    }
+}
+
 int main() {
     using namespace OptionLib;
     using namespace OptionLib::Models;
@@ -22,12 +34,32 @@ int main() {
     portfolio.addOption(callOption);
     portfolio.addOption(putOption);
 
-    auto binomialModel = std::make_shared<Binomial>(spotPrice, riskFreeRate, volatility);
-    auto callOption2 = std::make_shared<Option>(100, 1.0, OptionType::Call);
+    // auto binomialModel = std::make_shared<MonteCarlo>(spotPrice, riskFreeRate, volatility);
+    // auto callOption2 = std::make_shared<Option>(100, 1.0, OptionType::Call);
+    // portfolio.addOption(callOption2, binomialModel);
 
-    portfolio.addOption(callOption2, binomialModel); // Uses Binomial model specifically for this option
+    // Output the total portfolio value
+    double portfolioValue = portfolio.totalValue();
+    std::cout << "Total Portfolio Value: " << portfolioValue << std::endl;
 
-    std::cout << "Total Portfolio Value: " << portfolio.totalValue() << '\n';
+    // Output Greek vectors
+    const std::vector greekTypes = {
+        GreekType::Delta,
+        GreekType::Gamma,
+        GreekType::Vega,
+        GreekType::Theta,
+        GreekType::Rho
+    };
 
-    return 0;
+    for (const auto& greek : greekTypes) {
+        auto greekVector = portfolio.greekVector(greek);
+        std::cout << "Greek Vector (" << greekTypeName(greek) << "): ";
+        for (double value : greekVector) {
+            std::cout << value << " ";
+        }
+        std::cout << '\n';
+
+        double totalGreekValue = portfolio.totalGreek(greek);
+        std::cout << "Total " << greekTypeName(greek) << ": " << totalGreekValue << std::endl;
+    }
 }

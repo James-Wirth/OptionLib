@@ -15,9 +15,15 @@ namespace OptionLib::Models {
             : Model(spotPrice, riskFreeRate, volatility), numSteps(numSteps) {}
 
         double price(const Option& option) const override;
+        double computeGreek(const Option& option, GreekType greekType) const override;
 
     private:
         int numSteps;
+        double calculateDelta(const Option& option) const;
+        double calculateGamma(const Option& option) const;
+        double calculateVega(const Option& option) const;
+        double calculateTheta(const Option& option) const;
+        double calculateRho(const Option& option) const;
     };
 
 } // namespace OptionLib::Models

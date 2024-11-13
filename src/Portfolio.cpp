@@ -7,29 +7,47 @@
 
 namespace OptionLib {
 
-    // Constructor with an optional default model
     Portfolio::Portfolio(std::shared_ptr<Models::Model> defaultModel)
         : defaultModel(std::move(defaultModel)) {}
 
-    // Add an option with an optional model override
     void Portfolio::addOption(std::shared_ptr<Option> option, std::shared_ptr<Models::Model> model) {
-        // Use the provided model if available, otherwise fall back to the default model
+        // Use the provided model or fall back to the default model if none is provided
         if (!model) {
-            if (!defaultModel) {
-                throw std::runtime_error("No model specified for option and no default model set.");
-            }
             model = defaultModel;
         }
+
+        // Check if a model is provided (either directly or as the default model)
+        if (!model) {
+            throw std::invalid_argument("No model provided for option and no default model set.");
+        }
+
         items.emplace_back(std::move(option), std::move(model));
     }
 
-    // Calculate the total value of the portfolio
     double Portfolio::totalValue() const {
         double total = 0.0;
         for (const auto& item : items) {
-            total += item.model->price(*item.option); // Calculate option price using its model
+            total += item.model->price(*item.option);
         }
         return total;
+    }
+
+    double Portfolio::totalGreek(Models::GreekType greekType) const {
+        double total = 0.0;
+        for (const auto& item : items) {
+            total += item.model->computeGreek(*item.option, greekType);
+        }
+        return total;
+    }
+
+    std::vector<double> Portfolio::greekVector(Models::GreekType greekType) const {
+        std::vector<double> values;
+        values.reserve(items.size()); // Reserve memory for efficiency
+
+        for (const auto& item : items) {
+            values.push_back(item.model->computeGreek(*item.option, greekType));
+        }
+        return values;
     }
 
 } // namespace OptionLib

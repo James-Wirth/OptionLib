@@ -23,8 +23,14 @@ namespace OptionLib {
         // Calculate the total value of the portfolio
         double totalValue() const;
 
+        // Calculate the total Greek of a given type for the portfolio
+        double totalGreek(Models::GreekType greekType) const;
+
+        // Get a vector of Greek values for each option in the portfolio
+        std::vector<double> greekVector(Models::GreekType greekType) const;
+
     private:
-        // Internal structure to store each option with its model
+        // Internal structure to store each option with its associated model
         struct PortfolioItem {
             std::shared_ptr<Option> option;
             std::shared_ptr<Models::Model> model;

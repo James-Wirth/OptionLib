@@ -61,4 +61,49 @@ namespace OptionLib::Models {
         return optionValues[0];
     }
 
+    double binomialPrice(const Option& option, double spot, double rate, double vol, double time, int numSteps) {
+        double dt = time / numSteps;
+        double u = std::exp(vol * std::sqrt(dt));
+        double d = 1.0 / u;
+        double p = (std::exp(rate * dt) - d) / (u - d);
+
+        std::vector<double> assetPrices(numSteps + 1);
+        for (int i = 0; i <= numSteps; ++i) {
+            assetPrices[i] = spot * std::pow(u, numSteps - i) * std::pow(d, i);
+        }
+
+        std::vector<double> optionValues(numSteps + 1);
+        for (int i = 0; i <= numSteps; ++i) {
+            optionValues[i] = (option.getType() == OptionType::Call) ?
+                                   std::max(spot - option.getStrikePrice(), 0.0) :
+                                   std::max(option.getStrikePrice() - spot, 0.0);
+        }
+
+        for (int step = numSteps - 1; step >= 0; --step) {
+            for (int i = 0; i <= step; ++i) {
+                optionValues[i] = std::exp(-rate * dt) * (p * optionValues[i] + (1.0 - p) * optionValues[i + 1]);
+            }
+        }
+        return optionValues[0];
+    }
+
+    double Binomial::computeGreek(const Option& option, GreekType greekType) const {
+        switch (greekType) {
+            case GreekType::Delta: return calculateDelta(option);
+            case GreekType::Gamma: return calculateGamma(option);
+            case GreekType::Vega: return calculateVega(option);
+            case GreekType::Theta: return calculateTheta(option);
+            case GreekType::Rho: return calculateRho(option);
+            default:
+                throw std::invalid_argument("Invalid Greek type");
+        }
+    }
+
+    // Need to complete
+    double Binomial::calculateDelta(const Option& option) const {return 0.0;}
+    double Binomial::calculateGamma(const Option& option) const {return 0.0;}
+    double Binomial::calculateVega(const Option& option) const {return 0.0;}
+    double Binomial::calculateTheta(const Option& option) const {return 0.0;}
+    double Binomial::calculateRho(const Option& option) const {return 0.0;}
+
 } // namespace OptionLib::Models

@@ -59,4 +59,24 @@ namespace OptionLib::Models {
         return averagePayoff * discountFactor;
     }
 
+    double MonteCarlo::computeGreek(const Option& option, GreekType greekType) const {
+        switch (greekType) {
+            case GreekType::Delta: return calculateDelta(option);
+            case GreekType::Gamma: return calculateGamma(option);
+            case GreekType::Vega: return calculateVega(option);
+            case GreekType::Theta: return calculateTheta(option);
+            case GreekType::Rho: return calculateRho(option);
+            default:
+                throw std::invalid_argument("Invalid Greek type");
+        }
+    }
+
+    double MonteCarlo::calculateDelta(const Option& option) const {return 0.0;}
+    double MonteCarlo::calculateGamma(const Option& option) const {return 0.0;}
+    double MonteCarlo::calculateVega(const Option& option) const {return 0.0;}
+    double MonteCarlo::calculateTheta(const Option& option) const {return 0.0;}
+    double MonteCarlo::calculateRho(const Option& option) const {return 0.0;}
+
+
+
 } // namespace OptionLib::Models
