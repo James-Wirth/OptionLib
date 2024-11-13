@@ -13,4 +13,25 @@
 #include <OptionLib/models/Binomial.h>
 #include <OptionLib/Portfolio.h>
 
+namespace OptionLib {
+    using Models::Binomial;
+    using Models::BlackScholes;
+    using Models::MonteCarlo;
+    using Models::GreekType;
+
+    class Factory {
+    public:
+        // Factory methods for creating shared pointers to Model objects
+        template<typename ModelType, typename... Args>
+        static std::shared_ptr<Models::Model> createModel(Args&&... args) {
+            return std::make_shared<ModelType>(std::forward<Args>(args)...);
+        }
+
+        // Factory method for creating shared pointers to Option objects
+        static std::shared_ptr<Option> createOption(double strike, double expiry, OptionType type) {
+            return std::make_shared<Option>(strike, expiry, type);
+        }
+    };
+}
+
 #endif //OPTIONLIB_H

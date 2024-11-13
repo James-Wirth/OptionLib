@@ -18,19 +18,18 @@ inline std::string greekTypeName(GreekType greekType) {
     }
 }
 
-int main() {
-    using namespace OptionLib;
-    using namespace OptionLib::Models;
+using namespace OptionLib;
 
+int main() {
     double spotPrice = 100.0;
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    auto defaultModel = std::make_shared<Binomial>(spotPrice, riskFreeRate, volatility);
+    auto defaultModel = Factory::createModel<Binomial>(spotPrice, riskFreeRate, volatility);
     Portfolio portfolio(defaultModel);
 
-    auto callOption = std::make_shared<Option>(100, 1.0, OptionType::Call);
-    auto putOption = std::make_shared<Option>(100, 1.0, OptionType::Put);
+    auto callOption = Factory::createOption(100, 1.0, OptionType::Call);
+    auto putOption = Factory::createOption(100, 1.0, OptionType::Put);
 
     portfolio.addOption(callOption);
     portfolio.addOption(putOption);
