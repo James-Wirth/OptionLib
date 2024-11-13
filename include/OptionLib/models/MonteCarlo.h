@@ -25,6 +25,9 @@ namespace OptionLib::Models {
         double calculateVega(const Option& option) const;
         double calculateTheta(const Option& option) const;
         double calculateRho(const Option& option) const;
+
+        static double priceWrapper(const Option& option, double spotPrice, double riskFreeRate, double volatility,
+                                   double strikePrice, double timeToMaturity, int numSimulations);
     };
 
 } // namespace OptionLib::Models

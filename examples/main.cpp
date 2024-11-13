@@ -6,13 +6,14 @@
 #include "OptionLib/OptionLib.h"
 
 // Inline function for converting GreekType to a string
-inline std::string greekTypeName(OptionLib::Models::GreekType greekType) {
+using namespace OptionLib::Models;
+inline std::string greekTypeName(GreekType greekType) {
     switch (greekType) {
-        case OptionLib::Models::GreekType::Delta: return "Delta";
-        case OptionLib::Models::GreekType::Gamma: return "Gamma";
-        case OptionLib::Models::GreekType::Vega:  return "Vega";
-        case OptionLib::Models::GreekType::Theta: return "Theta";
-        case OptionLib::Models::GreekType::Rho:   return "Rho";
+        case GreekType::Delta: return "Delta";
+        case GreekType::Gamma: return "Gamma";
+        case GreekType::Vega:  return "Vega";
+        case GreekType::Theta: return "Theta";
+        case GreekType::Rho:   return "Rho";
         default: return "Unknown";
     }
 }
@@ -25,7 +26,7 @@ int main() {
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    auto defaultModel = std::make_shared<BlackScholes>(spotPrice, riskFreeRate, volatility);
+    auto defaultModel = std::make_shared<MonteCarlo>(spotPrice, riskFreeRate, volatility);
     Portfolio portfolio(defaultModel);
 
     auto callOption = std::make_shared<Option>(100, 1.0, OptionType::Call);
