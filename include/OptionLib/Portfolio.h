@@ -14,23 +14,15 @@ namespace OptionLib {
 
     class Portfolio {
     public:
-        // Constructor with an optional default model
         explicit Portfolio(std::shared_ptr<Models::Model> defaultModel = nullptr);
 
-        // Add an option with an optional model override; if no model is provided, use the default model
         void addOption(std::shared_ptr<Option> option, std::shared_ptr<Models::Model> model = nullptr);
 
-        // Calculate the total value of the portfolio
         double totalValue() const;
-
-        // Calculate the total Greek of a given type for the portfolio
         double totalGreek(Models::GreekType greekType) const;
-
-        // Get a vector of Greek values for each option in the portfolio
         std::vector<double> greekVector(Models::GreekType greekType) const;
 
     private:
-        // Internal structure to store each option with its associated model
         struct PortfolioItem {
             std::shared_ptr<Option> option;
             std::shared_ptr<Models::Model> model;
@@ -39,8 +31,8 @@ namespace OptionLib {
                 : option(std::move(opt)), model(std::move(mod)) {}
         };
 
-        std::vector<PortfolioItem> items;               // List of options and their models
-        std::shared_ptr<Models::Model> defaultModel;    // Default model for the portfolio
+        std::vector<PortfolioItem> items;
+        std::shared_ptr<Models::Model> defaultModel;
     };
 
 } // namespace OptionLib

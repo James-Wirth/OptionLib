@@ -26,7 +26,7 @@ int main() {
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    auto defaultModel = std::make_shared<MonteCarlo>(spotPrice, riskFreeRate, volatility);
+    auto defaultModel = std::make_shared<Binomial>(spotPrice, riskFreeRate, volatility);
     Portfolio portfolio(defaultModel);
 
     auto callOption = std::make_shared<Option>(100, 1.0, OptionType::Call);

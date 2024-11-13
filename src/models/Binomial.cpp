@@ -10,32 +10,29 @@
 
 namespace OptionLib::Models {
 
-    double Binomial::price(const Option& option) const {
-        double K = option.getStrikePrice();
-        double T = option.getTimeToExpiry();
-
-        double dt = T / numSteps;
-        double u = std::exp(volatility * std::sqrt(dt));
+    double Binomial::priceWrapper(const Option &_option, double _spotPrice, double _riskFreeRate, double _volatility, double _strikePrice, double _timeToMaturity, int _numSteps) {
+        double dt = _timeToMaturity / _numSteps;
+        double u = std::exp(_volatility * std::sqrt(dt));
         double d = 1.0 / u;
-        double p = (std::exp(riskFreeRate * dt) - d) / (u - d);
-        double discountFactor = std::exp(-riskFreeRate * dt);
+        double p = (std::exp(_riskFreeRate * dt) - d) / (u - d);
+        double discountFactor = std::exp(-_riskFreeRate * dt);
 
         unsigned int numThreads = std::thread::hardware_concurrency();
         if (numThreads == 0) numThreads = 2;
 
-        int nodesPerThread = (numSteps + 1) / numThreads;
-        int remainingNodes = (numSteps + 1) % numThreads;
+        int nodesPerThread = (_numSteps + 1) / numThreads;
+        int remainingNodes = (_numSteps + 1) % numThreads;
 
-        std::vector<double> optionValues(numSteps + 1);
-        std::vector<double> assetPrices(numSteps + 1);
+        std::vector<double> optionValues(_numSteps + 1);
+        std::vector<double> assetPrices(_numSteps + 1);
 
         auto payoffCalculator = [&](int start, int end) {
             for (int i = start; i < end; ++i) {
-                double assetPrice = spotPrice * std::pow(u, numSteps - i) * std::pow(d, i);
+                double assetPrice = _spotPrice * std::pow(u, _numSteps - i) * std::pow(d, i);
                 assetPrices[i] = assetPrice;
-                optionValues[i] = (option.getType() == OptionType::Call) ?
-                                   std::max(assetPrice - K, 0.0) :
-                                   std::max(K - assetPrice, 0.0);
+                optionValues[i] = (_option.getType() == OptionType::Call) ?
+                                   std::max(assetPrice - _strikePrice, 0.0) :
+                                   std::max(_strikePrice - assetPrice, 0.0);
             }
         };
 
@@ -51,7 +48,7 @@ namespace OptionLib::Models {
             future.get();
         }
 
-        for (int step = numSteps - 1; step >= 0; --step) {
+        for (int step = _numSteps - 1; step >= 0; --step) {
             for (int i = 0; i <= step; ++i) {
                 optionValues[i] = discountFactor * (p * optionValues[i] + (1.0 - p) * optionValues[i + 1]);
             }
@@ -61,30 +58,10 @@ namespace OptionLib::Models {
         return optionValues[0];
     }
 
-    double binomialPrice(const Option& option, double spot, double rate, double vol, double time, int numSteps) {
-        double dt = time / numSteps;
-        double u = std::exp(vol * std::sqrt(dt));
-        double d = 1.0 / u;
-        double p = (std::exp(rate * dt) - d) / (u - d);
-
-        std::vector<double> assetPrices(numSteps + 1);
-        for (int i = 0; i <= numSteps; ++i) {
-            assetPrices[i] = spot * std::pow(u, numSteps - i) * std::pow(d, i);
-        }
-
-        std::vector<double> optionValues(numSteps + 1);
-        for (int i = 0; i <= numSteps; ++i) {
-            optionValues[i] = (option.getType() == OptionType::Call) ?
-                                   std::max(spot - option.getStrikePrice(), 0.0) :
-                                   std::max(option.getStrikePrice() - spot, 0.0);
-        }
-
-        for (int step = numSteps - 1; step >= 0; --step) {
-            for (int i = 0; i <= step; ++i) {
-                optionValues[i] = std::exp(-rate * dt) * (p * optionValues[i] + (1.0 - p) * optionValues[i + 1]);
-            }
-        }
-        return optionValues[0];
+    double Binomial::price(const Option& option) const {
+        double K = option.getStrikePrice();
+        double T = option.getTimeToExpiry();
+        return priceWrapper(option, spotPrice, riskFreeRate, volatility, K, T, numSteps);
     }
 
     double Binomial::computeGreek(const Option& option, GreekType greekType) const {
@@ -100,10 +77,40 @@ namespace OptionLib::Models {
     }
 
     // Need to complete
-    double Binomial::calculateDelta(const Option& option) const {return 0.0;}
-    double Binomial::calculateGamma(const Option& option) const {return 0.0;}
-    double Binomial::calculateVega(const Option& option) const {return 0.0;}
-    double Binomial::calculateTheta(const Option& option) const {return 0.0;}
-    double Binomial::calculateRho(const Option& option) const {return 0.0;}
+    double Binomial::calculateDelta(const Option& option) const {
+        double epsilon = 0.01 * spotPrice;
+        double pricePlus = priceWrapper(option, spotPrice + epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double priceMinus = priceWrapper(option, spotPrice - epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        return (pricePlus - priceMinus) / (2 * epsilon);
+    }
+
+    double Binomial::calculateGamma(const Option& option) const {
+        double epsilon = 0.01 * spotPrice;
+        double pricePlus = priceWrapper(option, spotPrice + epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double priceCenter = priceWrapper(option, spotPrice, riskFreeRate, volatility, option.getStrikePrice(),option.getTimeToExpiry(), numSteps);
+        double priceMinus = priceWrapper(option, spotPrice - epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        return (pricePlus - 2 * priceCenter + priceMinus) / (epsilon * epsilon);
+    }
+
+    double Binomial::calculateVega(const Option& option) const {
+        double epsilon = 0.01;
+        double pricePlus = priceWrapper(option, spotPrice, riskFreeRate, volatility + epsilon, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double priceMinus = priceWrapper(option, spotPrice, riskFreeRate, volatility - epsilon, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        return (pricePlus - priceMinus) / (2 * epsilon);
+    }
+
+    double Binomial::calculateTheta(const Option& option) const {
+        double epsilon = 1.0 / 365;
+        double priceNow = priceWrapper(option, spotPrice, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double priceLater = priceWrapper(option, spotPrice, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry() - epsilon, numSteps);
+        return (priceLater - priceNow) / epsilon;
+    }
+
+    double Binomial::calculateRho(const Option& option) const {
+        double epsilon = 0.0001;
+        double pricePlus = priceWrapper(option, spotPrice, riskFreeRate + epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double priceMinus = priceWrapper(option, spotPrice, riskFreeRate - epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        return (pricePlus - priceMinus) / (2 * epsilon);
+    }
 
 } // namespace OptionLib::Models

@@ -11,7 +11,7 @@ namespace OptionLib::Models {
 
     class Binomial : public Model {
     public:
-        Binomial(double spotPrice, double riskFreeRate, double volatility, int numSteps = 100)
+        Binomial(double spotPrice, double riskFreeRate, double volatility, int numSteps = pow(10, 4))
             : Model(spotPrice, riskFreeRate, volatility), numSteps(numSteps) {}
 
         double price(const Option& option) const override;
@@ -24,6 +24,9 @@ namespace OptionLib::Models {
         double calculateVega(const Option& option) const;
         double calculateTheta(const Option& option) const;
         double calculateRho(const Option& option) const;
+
+        static double priceWrapper(const Option& option, double spotPrice, double riskFreeRate, double volatility,
+                                   double strikePrice, double timeToMaturity, int numSimulations);
     };
 
 } // namespace OptionLib::Models
