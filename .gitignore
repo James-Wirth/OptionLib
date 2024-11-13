@@ -1,0 +1,65 @@
+# Ignore build directories
+/build/
+/cmake-build-debug/
+/cmake-build-release/
+
+# Ignore CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Ignore generated executables and libraries
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# Ignore intermediate files
+*.o
+*.obj
+*.lo
+*.la
+
+# Ignore IDE and editor-specific files
+.idea/
+.vscode/
+*.swp
+*~
+*.user
+*.DS_Store
+
+# Ignore eigen includes (if using locally)
+eigen/
+
+# Ignore log files
+*.log
+
+# Ignore OS-specific files
+Thumbs.db
+.DS_Store
+
+# Ignore archives
+*.zip
+*.tar.gz
+*.7z
+*.rar
+
+# Ignore CLion specific caches and settings
+.clion/
+__CLion/
+.idea/
+
+# Ignore macOS system files
+.DS_Store
+._*
+
+# Ignore all temporary files
+*.tmp
