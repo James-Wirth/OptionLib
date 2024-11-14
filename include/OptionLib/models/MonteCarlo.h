@@ -7,6 +7,7 @@
 
 #include "Model.h"
 #include <random>
+#include <cmath>
 
 namespace OptionLib::Models {
 

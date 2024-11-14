@@ -6,6 +6,7 @@
 #define BINOMIAL_H
 
 #include "Model.h"
+#include <cmath>
 
 namespace OptionLib::Models {
 
