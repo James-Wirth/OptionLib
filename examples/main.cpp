@@ -25,18 +25,14 @@ int main() {
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    auto defaultModel = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, volatility);
+    ModelSP defaultModel = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, volatility);
     Portfolio portfolio(defaultModel);
 
-    auto callOption = Factory::createOption(100, 1.0, OptionType::Call);
-    auto putOption = Factory::createOption(100, 1.0, OptionType::Put);
+    OptionSP callOption = Factory::createOption(100, 1.0, OptionType::Call);
+    OptionSP putOption = Factory::createOption(100, 1.0, OptionType::Put);
 
     portfolio.addOption(callOption);
     portfolio.addOption(putOption);
-
-    // auto binomialModel = std::make_shared<MonteCarlo>(spotPrice, riskFreeRate, volatility);
-    // auto callOption2 = std::make_shared<Option>(100, 1.0, OptionType::Call);
-    // portfolio.addOption(callOption2, binomialModel);
 
     // Output the total portfolio value
     double portfolioValue = portfolio.totalValue();

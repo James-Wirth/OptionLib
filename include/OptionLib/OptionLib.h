@@ -13,6 +13,10 @@
 #include <OptionLib/models/Binomial.h>
 #include <OptionLib/Portfolio.h>
 
+// Type aliases for shared pointer
+using OptionSP = std::shared_ptr<OptionLib::Option>;
+using ModelSP = std::shared_ptr<OptionLib::Models::Model>;
+
 namespace OptionLib {
     using Models::Binomial;
     using Models::BlackScholes;
@@ -32,6 +36,7 @@ namespace OptionLib {
             return std::make_shared<Option>(strike, expiry, type);
         }
     };
+    using OptionLib::Factory;
 }
 
 #endif //OPTIONLIB_H
