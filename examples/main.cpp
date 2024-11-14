@@ -25,7 +25,7 @@ int main() {
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    auto defaultModel = Factory::createModel<MonteCarlo>(spotPrice, riskFreeRate, volatility);
+    auto defaultModel = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, volatility);
     Portfolio portfolio(defaultModel);
 
     auto callOption = Factory::createOption(100, 1.0, OptionType::Call);
