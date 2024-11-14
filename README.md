@@ -59,6 +59,15 @@ Calculate the portfolio value:
 double portfolioValue = portfolio.totalValue()
 ```
 
+Calculate the risk profile of the portfolio:
+
+```cpp
+// Value at risk with 95% confidence and a holding period of 1/52
+double portfolioVaR = portfolio.VaR(0.95, 1.0/52);
+
+// Expected shortfall with 95% confidence and holding period of 1/52
+double portfolioES = portfolio.ExpectedShortfall(0.95, 1.0/52);
+```
 
 
 
