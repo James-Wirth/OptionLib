@@ -30,7 +30,7 @@ ctest
 
 ## Usage
 
-Here is a simple usage that demonstrates setting up a portfolio with call and put options:
+Here is a simple usage that demonstrates setting up a portfolio with a single call option. The `Factory::` patern allows you to make `std::shared_ptr` objects for clean memory management. 
 
 ```cpp
 using namespace OptionLib;
@@ -42,9 +42,9 @@ AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice, riskFreeRate, volati
 
 strikePrice = 100.0;
 timeToMaturity = 1.0;
-OptionSP callOption = Factory::createOption(asset, strikePrice, timeToMaturity, OptionType::Call);
+OptionSP callOption = Factory::makeSharedOption(asset, strikePrice, timeToMaturity, OptionType::Call);
 
-ModelSP model = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, timeToMaturity);
+ModelSP model = Factory::makeSharedModel<BlackScholes>();
 Portfolio portfolio(model);
 portfolio.addOption(callOption);
 ```
