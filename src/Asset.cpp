@@ -3,6 +3,7 @@
 //
 
 #include <string>
+#include <stdexcept>
 #include <OptionLib/Asset.h>
 
 namespace OptionLib {
