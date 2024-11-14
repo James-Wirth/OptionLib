@@ -1,22 +1,18 @@
 name: CMake Build and Test
 
-# Trigger the workflow on pushes and pull requests to the main branch
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 
-# Define the jobs that will run in this workflow
 jobs:
   build:
-
-    # Run the job on different operating systems
+    # Run the job on Ubuntu, macOS, and Windows
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
-    # Set the job to run on the specified operating system
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -30,12 +26,13 @@ jobs:
         with:
           cmake-version: "3.14"
 
-      # Step 3: Set up a compiler (only necessary for Windows)
-      - name: Set up compiler
-        if: matrix.os == 'windows-latest'
-        uses: actions/setup-msbuild@v1
-        with:
-          msbuild-version: '16.0'
+      # Step 3: Set up compiler (specific configuration for Windows if needed)
+      - name: Set up compiler on Windows
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          set CC=cl
+          set CXX=cl
 
       # Step 4: Configure CMake
       - name: Configure with CMake
