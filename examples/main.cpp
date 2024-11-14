@@ -36,7 +36,7 @@ int main() {
 
     // Output the total portfolio value
     double portfolioValue = portfolio.totalValue();
-    std::cout << "Total Portfolio Value: " << portfolioValue << std::endl;
+    std::cout << "\nTotal Portfolio Value: " << portfolioValue << std::endl;
 
     // Output Greek vectors
     const std::vector greekTypes = {
@@ -49,7 +49,7 @@ int main() {
 
     for (const auto& greek : greekTypes) {
         auto greekVector = portfolio.greekVector(greek);
-        std::cout << "Greek Vector (" << greekTypeName(greek) << "): ";
+        std::cout << "\n" << greekTypeName(greek) << " Vector: ";
         for (double value : greekVector) {
             std::cout << value << " ";
         }
@@ -63,9 +63,9 @@ int main() {
     auto concentrations = portfolio.concentrationMeasures();
 
     // Output the concentration of each option in the portfolio
-    std::cout << "Portfolio Concentration Measures:\n";
+    std::cout << "\nPortfolio Concentration:\n";
     for (const auto& [optionId, concentration] : concentrations) {
-        std::cout << "Option " << optionId << ": " << concentration * 100 << "%\n";
+        std::cout << optionId << ": " << concentration * 100 << "%\n";
     }
 
     double confidenceLevel = 0.95;
@@ -75,12 +75,6 @@ int main() {
     double portfolioVaR = portfolio.VaR(confidenceLevel, holdingPeriod);
     double portfolioES = portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);
     std::cout << "\nPortfolio Risk Metrics (95% Confidence, Weekly Holding Period):\n";
-    std::cout << "  VaR: " << portfolioVaR << "\n";
-    std::cout << "  Expected Shortfall: " << portfolioES << "\n";
-
-
-    // auto sensitivities = portfolio.sensitivityAnalysis(0.01, 0.02);  // 1% spot change, 2% volatility change
-    // for (const auto& [option, sensitivity] : sensitivities) {
-    //     std::cout << option << " sensitivity: " << sensitivity << std::endl;
-    // }
+    std::cout << "VaR: " << portfolioVaR << "\n";
+    std::cout << "Expected Shortfall: " << portfolioES << "\n";
 }
