@@ -17,6 +17,10 @@ namespace OptionLib::Models {
         double price(const Option& option) const override;
         double computeGreek(const Option& option, GreekType greekType) const override;
 
+        double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+        double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+
+
     private:
         double calculateDelta(const Option& option) const;
         double calculateGamma(const Option& option) const;

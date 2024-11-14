@@ -7,6 +7,8 @@
 #include <future>
 #include <random>
 #include <vector>
+#include <chrono>
+#include <iostream>
 
 namespace OptionLib::Models {
 
@@ -110,6 +112,14 @@ namespace OptionLib::Models {
         double pricePlus = priceWrapper(option, spotPrice, riskFreeRate + epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSimulations);
         double priceMinus = priceWrapper(option, spotPrice, riskFreeRate - epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSimulations);
         return (pricePlus - priceMinus) / (2 * epsilon);
+    }
+
+    double MonteCarlo::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        return 0.0;
+    }
+
+    double MonteCarlo::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        return 0.0;
     }
 
 } // namespace OptionLib::Models

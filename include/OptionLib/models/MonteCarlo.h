@@ -18,6 +18,11 @@ namespace OptionLib::Models {
         double price(const Option& option) const override;
         double computeGreek(const Option& option, GreekType greekType) const override;
 
+        // Implement VaR and Expected Shortfall with Monte Carlo
+        double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+        double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+
+
     private:
         int numSimulations;
         double calculateDelta(const Option& option) const;

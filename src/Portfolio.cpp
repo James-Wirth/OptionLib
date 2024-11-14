@@ -4,6 +4,9 @@
 
 #include "OptionLib/Portfolio.h"
 #include "OptionLib/models/Model.h" // Include Model to access price method
+#include <random>
+#include <thread>
+#include <future>
 
 namespace OptionLib {
 
@@ -48,6 +51,58 @@ namespace OptionLib {
             values.push_back(item.model->computeGreek(*item.option, greekType));
         }
         return values;
+    }
+
+    double Portfolio::VaR(double confidenceLevel, double holdingPeriod) const {
+        double portfolioVaR = 0.0;
+        for (const auto& item : items) {
+            portfolioVaR += item.model->VaR(*item.option, confidenceLevel, holdingPeriod);
+        }
+        return portfolioVaR;
+    }
+
+    double Portfolio::ExpectedShortfall(double confidenceLevel, double holdingPeriod) const {
+        double portfolioES = 0.0;
+        for (const auto& item : items) {
+            portfolioES += item.model->ExpectedShortfall(*item.option, confidenceLevel, holdingPeriod);
+        }
+        return portfolioES;
+    }
+
+    // std::map<std::string, double> Portfolio::sensitivityAnalysis(double spotChange, double volatilityChange) const {
+    //     std::map<std::string, double> sensitivities;
+    //
+    //     for (const auto& item : items) {
+    //         double originalValue = item.model->price(*item.option);
+    //
+    //         // Sensitivity to spot change
+    //         item.model->setSpotPrice(item.model->getSpotPrice() * (1 + spotChange));
+    //         double newSpotValue = item.model->price(*item.option);
+    //         sensitivities[item.option->getDescription() + "_spotSensitivity"] = (newSpotValue - originalValue) / originalValue;
+    //
+    //         // Sensitivity to volatility change
+    //         item.model->setVolatility(item.model->getVolatility() * (1 + volatilityChange));
+    //         double newVolValue = item.model->price(*item.option);
+    //         sensitivities[item.option->getDescription() + "_volatilitySensitivity"] = (newVolValue - originalValue) / originalValue;
+    //
+    //         // Reset
+    //         item.model->resetParams();
+    //     }
+    //
+    //     return sensitivities;
+    // }
+
+    std::map<std::string, double> Portfolio::concentrationMeasures() const {
+        std::map<std::string, double> concentrations;
+        double totalValue = this->totalValue();
+
+        int index = 1;
+        for (const auto& item : items) {
+            double itemValue = item.model->price(*item.option);
+            concentrations["Option_" + std::to_string(index++)] = itemValue / totalValue;
+        }
+
+        return concentrations;
     }
 
 } // namespace OptionLib

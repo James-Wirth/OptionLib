@@ -25,7 +25,7 @@ int main() {
     double riskFreeRate = 0.05;
     double volatility = 0.2;
 
-    auto defaultModel = Factory::createModel<Binomial>(spotPrice, riskFreeRate, volatility);
+    auto defaultModel = Factory::createModel<MonteCarlo>(spotPrice, riskFreeRate, volatility);
     Portfolio portfolio(defaultModel);
 
     auto callOption = Factory::createOption(100, 1.0, OptionType::Call);
@@ -62,4 +62,29 @@ int main() {
         double totalGreekValue = portfolio.totalGreek(greek);
         std::cout << "Total " << greekTypeName(greek) << ": " << totalGreekValue << std::endl;
     }
+
+    // Calculate concentration measures
+    auto concentrations = portfolio.concentrationMeasures();
+
+    // Output the concentration of each option in the portfolio
+    std::cout << "Portfolio Concentration Measures:\n";
+    for (const auto& [optionId, concentration] : concentrations) {
+        std::cout << "Option " << optionId << ": " << concentration * 100 << "%\n";
+    }
+
+    double confidenceLevel = 0.95;
+    double holdingPeriod = 1.0 / 52; // Weekly holding period
+
+    // Output portfolio VaR and Expected Shortfall
+    double portfolioVaR = portfolio.VaR(confidenceLevel, holdingPeriod);
+    double portfolioES = portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);
+    std::cout << "\nPortfolio Risk Metrics (95% Confidence, Weekly Holding Period):\n";
+    std::cout << "  VaR: " << portfolioVaR << "\n";
+    std::cout << "  Expected Shortfall: " << portfolioES << "\n";
+
+
+    // auto sensitivities = portfolio.sensitivityAnalysis(0.01, 0.02);  // 1% spot change, 2% volatility change
+    // for (const auto& [option, sensitivity] : sensitivities) {
+    //     std::cout << option << " sensitivity: " << sensitivity << std::endl;
+    // }
 }

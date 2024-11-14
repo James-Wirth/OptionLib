@@ -24,6 +24,9 @@ namespace OptionLib::Models {
 
         virtual ~Model();
 
+        virtual double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const = 0;
+        virtual double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const = 0;
+
         virtual double price(const Option& option) const = 0;
         virtual double computeGreek(const Option& option, GreekType type) const = 0;
 

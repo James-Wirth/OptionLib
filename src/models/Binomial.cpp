@@ -7,6 +7,7 @@
 #include <future>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 namespace OptionLib::Models {
 
@@ -111,6 +112,14 @@ namespace OptionLib::Models {
         double pricePlus = priceWrapper(option, spotPrice, riskFreeRate + epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
         double priceMinus = priceWrapper(option, spotPrice, riskFreeRate - epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
         return (pricePlus - priceMinus) / (2 * epsilon);
+    }
+
+    double Binomial::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        return 0.0;
+    }
+
+    double Binomial::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        return 0.0;
     }
 
 } // namespace OptionLib::Models

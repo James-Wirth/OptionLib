@@ -5,6 +5,16 @@
 #include <OptionLib/models/BlackScholes.h>
 #include <cmath>
 #include <stdexcept>
+#include <limits>
+#include <algorithm>
+
+double approxErfInv(double x) {
+    const double a = 0.147;  // Constant for the approximation
+    double ln_term = std::log(1 - x * x);
+    double pi_term = (2 / (M_PI * a)) + (ln_term / 2);
+
+    return std::copysign(std::sqrt(std::sqrt(pi_term * pi_term - ln_term / a) - pi_term), x);
+}
 
 namespace OptionLib::Models {
 
@@ -95,6 +105,29 @@ namespace OptionLib::Models {
         } else {
             return -K * T * std::exp(-riskFreeRate * T) * normalCDF(-d2);
         }
+    }
+
+    double BlackScholes::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        double optionPrice = price(option);
+        double adjustedVolatility = volatility * std::sqrt(holdingPeriod);
+
+        // Calculate the Z-score for the specified confidence level
+        double zScore = approxErfInv(2 * confidenceLevel - 1) * std::sqrt(2);  // Using Boost's erf_inv
+
+        // Calculate VaR as the expected loss at the confidence level
+        return optionPrice * (1 - std::exp(-zScore * adjustedVolatility));
+    }
+
+    double BlackScholes::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        double VaR = this->VaR(option, confidenceLevel, holdingPeriod);
+
+        // Mean Excess Loss beyond VaR
+        double optionPrice = price(option);
+        double adjustedVolatility = volatility * std::sqrt(holdingPeriod);
+
+        // Expected Shortfall calculation (adjusted for Black-Scholes assumptions)
+        double meanExcessLoss = optionPrice * adjustedVolatility * approxErfInv(2 * confidenceLevel - 1) / std::sqrt(M_PI);
+        return VaR + meanExcessLoss;
     }
 
 

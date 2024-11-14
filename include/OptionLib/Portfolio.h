@@ -8,6 +8,7 @@
 #include "OptionLib/Option.h"
 #include "OptionLib/models/Model.h" // Include the complete Model definition
 #include <vector>
+#include <map>
 #include <memory>
 
 namespace OptionLib {
@@ -21,6 +22,12 @@ namespace OptionLib {
         double totalValue() const;
         double totalGreek(Models::GreekType greekType) const;
         std::vector<double> greekVector(Models::GreekType greekType) const;
+
+        // std::map<std::string, double> sensitivityAnalysis(double spotChange, double volatilityChange) const;
+        std::map<std::string, double> concentrationMeasures() const;
+
+        double VaR(double confidenceLevel, double holdingPeriod) const;
+        double ExpectedShortfall(double confidenceLevel, double holdingPeriod) const;
 
     private:
         struct PortfolioItem {
