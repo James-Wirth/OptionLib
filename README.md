@@ -35,10 +35,10 @@ Here is a simple usage that demonstrates setting up a portfolio with a single ca
 ```cpp
 using namespace OptionLib;
 
-spotPrice = 100.0;
-riskFreeRate = 0.05;
-volatility = 0.2;
-AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice, riskFreeRate, volatility);
+double spotPrice = 100.0;
+AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice)
+asset->set(Param::volatility, 0.2);
+asset->set(Param::riskFreeRate, 0.05);
 
 strikePrice = 100.0;
 timeToMaturity = 1.0;
