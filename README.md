@@ -48,45 +48,49 @@ Here is a simple usage that demonstrates setting up a portfolio with call and pu
 ```cpp
 using namespace OptionLib;
 
-// Black-Scholes model with spot 100.0, risk-free rate 0.05
-// and constant volatility 0.2
-auto model = Factory::createModel<BlackScholes>(100.0, 0.05, 0.2);
+spotPrice = 100.0;
+riskFreeRate = 0.05;
+volatility = 0.2;
+ModelSP model = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, timeToMaturity);
 
-// Instantiate portfolio with default model type <BlackScholes>
+strikePrice = 100.0;
+timeToMaturity = 1.0;
+OptionSP callOption = Factory::createOption(strikePrice, timeToMaturity, OptionType::Call);
+
+// Create portfolio with default model type <BlackScholes>
+// and add the option
+
 Portfolio portfolio(model);
-
-// Create a call option with strike 100.0, expiry 1.0
-auto callOption = Factory::createOption(100.0, 1.0, OptionType::Call);
-
-// Add option to the portfolio
 portfolio.addOption(callOption);
 ```
 
 ### Greeks Calculation:
 
+Calculate the value of the Greeks for each option in the portfolio. For example, for the $\Delta$,
+
 ```cpp
-// Greeks for each option in the portfolio
 auto greekVector = portfolio.greekVector(GreekType::Delta)
 ```
 
 ### Portfolio Value and Concentration:
 
-```cpp
-// Total value of the portfolio
-double portfolioValue = portfolio.totalValue()
+Calculate the total value of the portfolio and its concentration among the held options:
 
-// Concentration of the portfolio
+```cpp
+double portfolioValue = portfolio.totalValue()
 auto concentrations = portfolio.concentrationMeasures();
 ```
 
 ### Risk Analysis:
 
-```cpp
-// Value at risk with 95% confidence and a holding period of 1/52
-double portfolioVaR = portfolio.VaR(0.95, 1.0/52);
+Calculate the value at risk (VaR) and the expected shortfall (ES).
 
-// Expected shortfall with 95% confidence and holding period of 1/52
-double portfolioES = portfolio.ExpectedShortfall(0.95, 1.0/52);
+```cpp
+confidenceLevel = 0.95;
+holdingTime = 1.0/52;
+
+double portfolioVaR = portfolio.VaR(confidenceLevel, holdingPeriod);
+double portfolioES = portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);;
 ```
 
 
