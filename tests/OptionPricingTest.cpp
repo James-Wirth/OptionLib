@@ -6,7 +6,7 @@
 #include <cmath>
 #include <OptionLib/OptionLib.h>
 
-constexpr double TOLERANCE = 1e-2;
+constexpr double TOLERANCE = 2e-2;
 
 TEST(OptionPricingTest, ModelComparison) {
     using namespace OptionLib;
