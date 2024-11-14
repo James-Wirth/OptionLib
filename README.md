@@ -3,19 +3,6 @@
 [![CMake Build and Test](https://github.com/James-Wirth/OptionLib/actions/workflows/ci.yml/badge.svg)](https://github.com/James-Wirth/OptionLib/actions/workflows/ci.yml)
 
 OptionLib is a C++ library designed for options pricing and financial modelling, with support for various pricing models. This project is a **work in progress**, with more features planned for future release.
-
-## Features
-
-- **Pricing Models**
-  - Black-Scholes
-  - Monte Carlo
-  - Binomial model
-  - More to come...
-
-- **Portfolio Management**
-  - Build and manage an options portfolio
-  - Comprehensive Greeks analysis
-  - Risk analysis tools (VaR, Expected Shortfall)
  
 ## Installation
 
