@@ -5,6 +5,8 @@
 #ifndef ASSET_H
 #define ASSET_H
 
+#include <unordered_map>
+
 namespace OptionLib {
 
     // Define possible parameter keys as an enum
