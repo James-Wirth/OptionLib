@@ -15,7 +15,8 @@ add_library(OptionLib STATIC ${LIBRARY_SOURCES})
 target_include_directories(OptionLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Example executable for testing
-add_executable(example examples/main.cpp)
+add_executable(example examples/main.cpp
+        include/OptionLib/Asset.h)
 
 # Link the library to the example executable
 target_link_libraries(example PRIVATE OptionLib)

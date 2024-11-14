@@ -12,22 +12,21 @@ TEST(OptionPricingTest, ModelComparison) {
     using namespace OptionLib;
     using namespace OptionLib::Models;
 
-    double spotPrice = 100.0;
     double strikePrice = 100.0;
     double timeToExpiry = 1.0;
-    double riskFreeRate = 0.05;
-    double volatility = 0.2;
 
-    Option callOption(strikePrice, timeToExpiry, OptionType::Call);
-    Option putOption(strikePrice, timeToExpiry, OptionType::Put);
+    auto asset = std::make_shared<Asset>("AAPL", 100.0, 0.2, 0.05);
+
+    Option callOption = Option(asset, strikePrice, timeToExpiry, OptionType::Call);
+    Option putOption = Option(asset, strikePrice, timeToExpiry, OptionType::Put);
 
     double expectedCallPrice = 10.45;
     double expectedPutPrice = 5.57;
 
     std::vector<std::unique_ptr<Model>> models;
-    models.emplace_back(std::make_unique<BlackScholes>(spotPrice, riskFreeRate, volatility));
-    models.emplace_back(std::make_unique<Binomial>(spotPrice, riskFreeRate, volatility, pow(10, 4)));
-    models.emplace_back(std::make_unique<MonteCarlo>(spotPrice, riskFreeRate, volatility, pow(10, 7)));
+    models.emplace_back(std::make_unique<BlackScholes>());
+    models.emplace_back(std::make_unique<Binomial>());
+    models.emplace_back(std::make_unique<MonteCarlo>());
 
     for (const auto& model : models) {
         double callPrice = model->price(callOption);

@@ -6,6 +6,7 @@
 #define OPTION_H
 
 #include <string>
+#include "Asset.h"
 
 namespace OptionLib {
 
@@ -16,8 +17,9 @@ namespace OptionLib {
 
     class Option {
     public:
-        Option(double strikePrice, double timeToExpiry, OptionType type);
+        Option(std::shared_ptr<Asset> asset, double strikePrice, double timeToExpiry, OptionType type);
 
+        std::shared_ptr<Asset> getAsset() const;
         double getStrikePrice() const;
         double getTimeToExpiry() const;
         OptionType getType() const;
@@ -29,6 +31,7 @@ namespace OptionLib {
         std::string typeToString() const;
 
     private:
+        std::shared_ptr<Asset> asset;
         double strikePrice;
         double timeToExpiry;
         OptionType type;

@@ -13,24 +13,22 @@ namespace OptionLib::Models {
 
     class MonteCarlo : public Model {
     public:
-        MonteCarlo(double spotPrice, double riskFreeRate, double volatility, int numSimulations = std::pow(10, 7))
-            : Model(spotPrice, riskFreeRate, volatility), numSimulations(numSimulations) {}
+        explicit MonteCarlo() = default;
 
-        double price(const Option& option) const override;
-        double computeGreek(const Option& option, GreekType greekType) const override;
+        [[nodiscard]] double price(const Option& option) const override;
+        [[nodiscard]] double computeGreek(const Option& option, GreekType greekType) const override;
 
         // Implement VaR and Expected Shortfall with Monte Carlo
-        double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const override;
-        double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+        [[nodiscard]] double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+        [[nodiscard]] double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const override;
 
 
     private:
-        int numSimulations;
-        double calculateDelta(const Option& option) const;
-        double calculateGamma(const Option& option) const;
-        double calculateVega(const Option& option) const;
-        double calculateTheta(const Option& option) const;
-        double calculateRho(const Option& option) const;
+        static double calculateDelta(const Option& option);
+        static double calculateGamma(const Option& option);
+        static double calculateVega(const Option& option);
+        static double calculateTheta(const Option& option);
+        static double calculateRho(const Option& option);
 
         static double priceWrapper(const Option& option, double spotPrice, double riskFreeRate, double volatility,
                                    double strikePrice, double timeToMaturity, int numSimulations);

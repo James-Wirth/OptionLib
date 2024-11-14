@@ -27,16 +27,18 @@ namespace OptionLib::Models {
     }
 
     double BlackScholes::price(const Option& option) const {
+
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
 
-        double d1 = (std::log(spotPrice / K) + (riskFreeRate + 0.5 * volatility * volatility) * T) / (volatility * std::sqrt(T));
-        double d2 = d1 - volatility * std::sqrt(T);
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) / (asset->getVolatility() * std::sqrt(T));
+        double d2 = d1 - asset->getVolatility() * std::sqrt(T);
 
         if (option.getType() == OptionType::Call) {
-            return spotPrice * normalCDF(d1) - K * std::exp(-riskFreeRate * T) * normalCDF(d2);
+            return asset->getSpotPrice() * normalCDF(d1) - K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(d2);
         } else if (option.getType() == OptionType::Put) {
-            return K * std::exp(-riskFreeRate * T) * normalCDF(-d2) - spotPrice * normalCDF(-d1);
+            return K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(-d2) - asset->getSpotPrice() * normalCDF(-d1);
         } else {
             throw std::invalid_argument("Unknown option type.");
         }
@@ -54,11 +56,12 @@ namespace OptionLib::Models {
         }
     }
 
-    double BlackScholes::calculateDelta(const Option& option) const {
+    double BlackScholes::calculateDelta(const Option& option) {
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(spotPrice / K) + (riskFreeRate + 0.5 * volatility * volatility) * T) /
-                    (volatility * std::sqrt(T));
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
+                    (asset->getVolatility() * std::sqrt(T));
         if (option.getType() == OptionType::Call) {
             return normalCDF(d1);
         } else {
@@ -66,50 +69,55 @@ namespace OptionLib::Models {
         }
     }
 
-    double BlackScholes::calculateGamma(const Option& option) const {
+    double BlackScholes::calculateGamma(const Option& option) {
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(spotPrice / K) + (riskFreeRate + 0.5 * volatility * volatility) * T) /
-                    (volatility * std::sqrt(T));
-        return normalPDF(d1) / (spotPrice * volatility * std::sqrt(T));
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
+                    (asset->getVolatility() * std::sqrt(T));
+        return normalPDF(d1) / (asset->getSpotPrice() * asset->getVolatility() * std::sqrt(T));
     }
 
-    double BlackScholes::calculateVega(const Option& option) const {
+    double BlackScholes::calculateVega(const Option& option) {
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(spotPrice / K) + (riskFreeRate + 0.5 * volatility * volatility) * T) /
-                    (volatility * std::sqrt(T));
-        return spotPrice * normalPDF(d1) * std::sqrt(T);
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
+                    (asset->getVolatility() * std::sqrt(T));
+        return asset->getSpotPrice() * normalPDF(d1) * std::sqrt(T);
     }
 
-    double BlackScholes::calculateTheta(const Option& option) const {
+    double BlackScholes::calculateTheta(const Option& option) {
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(spotPrice / K) + (riskFreeRate + 0.5 * volatility * volatility) * T) /
-                    (volatility * std::sqrt(T));
-        double d2 = d1 - volatility * std::sqrt(T);
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
+                    (asset->getVolatility() * std::sqrt(T));
+        double d2 = d1 - asset->getVolatility() * std::sqrt(T);
         if (option.getType() == OptionType::Call) {
-            return -spotPrice * normalPDF(d1) * volatility / (2 * std::sqrt(T)) - riskFreeRate * K * std::exp(-riskFreeRate * T) * normalCDF(d2);
+            return -asset->getSpotPrice() * normalPDF(d1) * asset->getVolatility() / (2 * std::sqrt(T)) - asset->getRiskFreeRate() * K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(d2);
         } else {
-            return -spotPrice * normalPDF(d1) * volatility / (2 * std::sqrt(T)) + riskFreeRate * K * std::exp(-riskFreeRate * T) * normalCDF(-d2);
+            return -asset->getSpotPrice() * normalPDF(d1) * asset->getVolatility() / (2 * std::sqrt(T)) + asset->getRiskFreeRate() * K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(-d2);
         }
     }
 
-    double BlackScholes::calculateRho(const Option& option) const {
+    double BlackScholes::calculateRho(const Option& option) {
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d2 = (std::log(spotPrice / K) + (riskFreeRate - 0.5 * volatility * volatility) * T) /
-                    (volatility * std::sqrt(T));
+        double d2 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() - 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
+                    (asset->getVolatility() * std::sqrt(T));
         if (option.getType() == OptionType::Call) {
-            return K * T * std::exp(-riskFreeRate * T) * normalCDF(d2);
+            return K * T * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(d2);
         } else {
-            return -K * T * std::exp(-riskFreeRate * T) * normalCDF(-d2);
+            return -K * T * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(-d2);
         }
     }
 
     double BlackScholes::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
+        auto asset = option.getAsset();
         double optionPrice = price(option);
-        double adjustedVolatility = volatility * std::sqrt(holdingPeriod);
+        double adjustedVolatility = asset->getVolatility() * std::sqrt(holdingPeriod);
 
         // Calculate the Z-score for the specified confidence level
         double zScore = approxErfInv(2 * confidenceLevel - 1) * std::sqrt(2);  // Using Boost's erf_inv
@@ -121,9 +129,10 @@ namespace OptionLib::Models {
     double BlackScholes::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
         double VaR = this->VaR(option, confidenceLevel, holdingPeriod);
 
+        auto asset = option.getAsset();
         // Mean Excess Loss beyond VaR
         double optionPrice = price(option);
-        double adjustedVolatility = volatility * std::sqrt(holdingPeriod);
+        double adjustedVolatility = asset->getVolatility() * std::sqrt(holdingPeriod);
 
         // Expected Shortfall calculation (adjusted for Black-Scholes assumptions)
         double meanExcessLoss = optionPrice * adjustedVolatility * approxErfInv(2 * confidenceLevel - 1) / std::sqrt(M_PI);

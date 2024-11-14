@@ -16,6 +16,7 @@
 // Type aliases for shared pointer
 using OptionSP = std::shared_ptr<OptionLib::Option>;
 using ModelSP = std::shared_ptr<OptionLib::Models::Model>;
+using AssetSP = std::shared_ptr<OptionLib::Asset>;
 
 namespace OptionLib {
     using Models::Binomial;
@@ -27,13 +28,17 @@ namespace OptionLib {
     public:
         // Factory methods for creating shared pointers to Model objects
         template<typename ModelType, typename... Args>
-        static std::shared_ptr<Models::Model> createModel(Args&&... args) {
+        static std::shared_ptr<Models::Model> makeSharedModel(Args&&... args) {
             return std::make_shared<ModelType>(std::forward<Args>(args)...);
         }
 
         // Factory method for creating shared pointers to Option objects
-        static std::shared_ptr<Option> createOption(double strike, double expiry, OptionType type) {
-            return std::make_shared<Option>(strike, expiry, type);
+        static std::shared_ptr<Option> makeSharedOption(std::shared_ptr<Asset> asset, double strike, double expiry, OptionType type) {
+            return std::make_shared<Option>(asset, strike, expiry, type);
+        }
+
+        static std::shared_ptr<Asset> makeSharedAsset(std::string id, double spotPrice, double volatility, double riskFreeRate) {
+            return std::make_shared<Asset>(id, spotPrice, volatility, riskFreeRate);
         }
     };
     using OptionLib::Factory;

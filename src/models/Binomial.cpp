@@ -60,9 +60,10 @@ namespace OptionLib::Models {
     }
 
     double Binomial::price(const Option& option) const {
+        auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        return priceWrapper(option, spotPrice, riskFreeRate, volatility, K, T, numSteps);
+        return priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate(), asset->getVolatility(), K, T, static_cast<int>(std::pow(10, 4)));
     }
 
     double Binomial::computeGreek(const Option& option, GreekType greekType) const {
@@ -77,40 +78,44 @@ namespace OptionLib::Models {
         }
     }
 
-    // Need to complete
-    double Binomial::calculateDelta(const Option& option) const {
-        double epsilon = 0.01 * spotPrice;
-        double pricePlus = priceWrapper(option, spotPrice + epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
-        double priceMinus = priceWrapper(option, spotPrice - epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+    double Binomial::calculateDelta(const Option& option) {
+        auto asset = option.getAsset();
+        double epsilon = 0.01 * asset->getSpotPrice();
+        double pricePlus = priceWrapper(option, asset->getSpotPrice() + epsilon, asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
+        double priceMinus = priceWrapper(option, asset->getSpotPrice() - epsilon, asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
         return (pricePlus - priceMinus) / (2 * epsilon);
     }
 
-    double Binomial::calculateGamma(const Option& option) const {
-        double epsilon = 0.01 * spotPrice;
-        double pricePlus = priceWrapper(option, spotPrice + epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
-        double priceCenter = priceWrapper(option, spotPrice, riskFreeRate, volatility, option.getStrikePrice(),option.getTimeToExpiry(), numSteps);
-        double priceMinus = priceWrapper(option, spotPrice - epsilon, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+    double Binomial::calculateGamma(const Option& option) {
+        auto asset = option.getAsset();
+        double epsilon = 0.01 * asset->getSpotPrice();
+        double pricePlus = priceWrapper(option, asset->getSpotPrice() + epsilon, asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
+        double priceCenter = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(),option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
+        double priceMinus = priceWrapper(option, asset->getSpotPrice() - epsilon, asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
         return (pricePlus - 2 * priceCenter + priceMinus) / (epsilon * epsilon);
     }
 
-    double Binomial::calculateVega(const Option& option) const {
+    double Binomial::calculateVega(const Option& option) {
+        auto asset = option.getAsset();
         double epsilon = 0.01;
-        double pricePlus = priceWrapper(option, spotPrice, riskFreeRate, volatility + epsilon, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
-        double priceMinus = priceWrapper(option, spotPrice, riskFreeRate, volatility - epsilon, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double pricePlus = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate(), asset->getVolatility() + epsilon, option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
+        double priceMinus = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate(), asset->getVolatility() - epsilon, option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
         return (pricePlus - priceMinus) / (2 * epsilon);
     }
 
-    double Binomial::calculateTheta(const Option& option) const {
+    double Binomial::calculateTheta(const Option& option) {
+        auto asset = option.getAsset();
         double epsilon = 1.0 / 365;
-        double priceNow = priceWrapper(option, spotPrice, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
-        double priceLater = priceWrapper(option, spotPrice, riskFreeRate, volatility, option.getStrikePrice(), option.getTimeToExpiry() - epsilon, numSteps);
+        double priceNow = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
+        double priceLater = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate(), asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry() - epsilon, static_cast<int>(std::pow(10, 4)));
         return (priceLater - priceNow) / epsilon;
     }
 
-    double Binomial::calculateRho(const Option& option) const {
+    double Binomial::calculateRho(const Option& option) {
+        auto asset = option.getAsset();
         double epsilon = 0.0001;
-        double pricePlus = priceWrapper(option, spotPrice, riskFreeRate + epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
-        double priceMinus = priceWrapper(option, spotPrice, riskFreeRate - epsilon, volatility, option.getStrikePrice(), option.getTimeToExpiry(), numSteps);
+        double pricePlus = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate() + epsilon, asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
+        double priceMinus = priceWrapper(option, asset->getSpotPrice(), asset->getRiskFreeRate() - epsilon, asset->getVolatility(), option.getStrikePrice(), option.getTimeToExpiry(), static_cast<int>(std::pow(10, 4)));
         return (pricePlus - priceMinus) / (2 * epsilon);
     }
 

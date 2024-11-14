@@ -1,10 +1,11 @@
 //
-// Created by James Wirth on 13/11/2024.
+// Created by James Wirth on 14/11/2024.
 //
 
-// Model.cpp
 #include "OptionLib/models/Model.h"
 
 namespace OptionLib::Models {
-    Model::~Model() = default;  // Define the virtual destructor
-}
+
+        Model::~Model() = default; // Define virtual destructor if needed
+
+} // namespace Models

@@ -11,22 +11,21 @@ namespace OptionLib::Models {
 
     class BlackScholes : public Model {
     public:
-        BlackScholes(double spotPrice, double riskFreeRate, double volatility)
-            : Model(spotPrice, riskFreeRate, volatility) {}
+        BlackScholes() = default;
 
-        double price(const Option& option) const override;
-        double computeGreek(const Option& option, GreekType greekType) const override;
+        [[nodiscard]] double price(const Option& option) const override;
+        [[nodiscard]] double computeGreek(const Option& option, GreekType greekType) const override;
 
-        double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const override;
-        double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+        [[nodiscard]] double VaR(const Option& option, double confidenceLevel, double holdingPeriod) const override;
+        [[nodiscard]] double ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const override;
 
 
     private:
-        double calculateDelta(const Option& option) const;
-        double calculateGamma(const Option& option) const;
-        double calculateVega(const Option& option) const;
-        double calculateTheta(const Option& option) const;
-        double calculateRho(const Option& option) const;
+        static double calculateDelta(const Option& option);
+        static double calculateGamma(const Option& option);
+        static double calculateVega(const Option& option);
+        static double calculateTheta(const Option& option);
+        static double calculateRho(const Option& option);
     };
 
 } // namespace OptionLib::Models

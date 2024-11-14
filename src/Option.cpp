@@ -7,14 +7,18 @@
 
 namespace OptionLib {
 
-    Option::Option(double strikePrice, double timeToExpiry, OptionType type)
-        : strikePrice(strikePrice), timeToExpiry(timeToExpiry), type(type) {
+    Option::Option(std::shared_ptr<Asset> asset, double strikePrice, double timeToExpiry, OptionType type)
+        : asset(std::move(asset)), strikePrice(strikePrice), timeToExpiry(timeToExpiry), type(type) {
         if (strikePrice <= 0) {
             throw std::invalid_argument("Strike price must be positive.");
         }
         if (timeToExpiry <= 0) {
             throw std::invalid_argument("Time to expiry must be positive.");
         }
+    }
+
+    std::shared_ptr<Asset> Option::getAsset() const {
+        return asset;
     }
 
     double Option::getStrikePrice() const {
