@@ -40,8 +40,8 @@ AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice)
 asset->set(Param::volatility, 0.2);
 asset->set(Param::riskFreeRate, 0.05);
 
-strikePrice = 100.0;
-timeToMaturity = 1.0;
+double strikePrice = 100.0;
+double timeToMaturity = 1.0;
 OptionSP callOption = Factory::makeSharedOption(asset, strikePrice, timeToMaturity, OptionType::Call);
 
 ModelSP model = Factory::makeSharedModel<BlackScholes>();
@@ -71,8 +71,8 @@ auto concentrations = portfolio.concentrationMeasures();
 Calculate the value at risk (VaR) and the expected shortfall (ES).
 
 ```cpp
-confidenceLevel = 0.95;
-holdingTime = 1.0/52;
+double confidenceLevel = 0.95;
+double holdingTime = 1.0/52;
 
 double portfolioVaR = portfolio.VaR(confidenceLevel, holdingPeriod);
 double portfolioES = portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);;
