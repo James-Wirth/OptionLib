@@ -11,7 +11,7 @@ namespace OptionLib::Models {
 
     class Binomial : public Model {
     public:
-        Binomial(double spotPrice, double riskFreeRate, double volatility, int numSteps = pow(10, 4))
+        Binomial(double spotPrice, double riskFreeRate, double volatility, int numSteps = std::pow(10, 4))
             : Model(spotPrice, riskFreeRate, volatility), numSteps(numSteps) {}
 
         double price(const Option& option) const override;

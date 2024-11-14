@@ -12,7 +12,7 @@ namespace OptionLib::Models {
 
     class MonteCarlo : public Model {
     public:
-        MonteCarlo(double spotPrice, double riskFreeRate, double volatility, int numSimulations = pow(10, 7))
+        MonteCarlo(double spotPrice, double riskFreeRate, double volatility, int numSimulations = std::pow(10, 7))
             : Model(spotPrice, riskFreeRate, volatility), numSimulations(numSimulations) {}
 
         double price(const Option& option) const override;
