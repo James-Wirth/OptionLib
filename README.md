@@ -6,16 +6,16 @@ OptionLib is a C++ library designed for options pricing and financial modelling,
 
 ## Features
 
-- **Pricing models**
+- **Pricing Models**
   - Black-Scholes
-  - Monte-Carlo
+  - Monte Carlo
   - Binomial model
-  - More soon...!
+  - More to come...
 
-- **Portfolio management**
-  - Create and manage a portfolio of options
-  - Greeks analysis
-  - Risk analysis (VaR and ES)
+- **Portfolio Management**
+  - Build and manage an options portfolio
+  - Comprehensive Greeks analysis
+  - Risk analysis tools (VaR, Expected Shortfall)
  
 ## Installation
 
@@ -62,14 +62,14 @@ auto callOption = Factory::createOption(100.0, 1.0, OptionType::Call);
 portfolio.addOption(callOption);
 ```
 
-### Greeks:
+### Greeks Calculation:
 
 ```cpp
 // Greeks for each option in the portfolio
 auto greekVector = portfolio.greekVector(GreekType::Delta)
 ```
 
-### Value & concentration:
+### Portfolio Value and Concentration:
 
 ```cpp
 // Total value of the portfolio
@@ -79,7 +79,7 @@ double portfolioValue = portfolio.totalValue()
 auto concentrations = portfolio.concentrationMeasures();
 ```
 
-### Risk analysis:
+### Risk Analysis:
 
 ```cpp
 // Value at risk with 95% confidence and a holding period of 1/52
