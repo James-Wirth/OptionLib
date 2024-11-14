@@ -32,13 +32,13 @@ namespace OptionLib::Models {
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
 
-        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) / (asset->getVolatility() * std::sqrt(T));
-        double d2 = d1 - asset->getVolatility() * std::sqrt(T);
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->get(Param::riskFreeRate) + 0.5 * asset->get(Param::volatility) * asset->get(Param::volatility)) * T) / (asset->get(Param::volatility) * std::sqrt(T));
+        double d2 = d1 - asset->get(Param::volatility) * std::sqrt(T);
 
         if (option.getType() == OptionType::Call) {
-            return asset->getSpotPrice() * normalCDF(d1) - K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(d2);
+            return asset->getSpotPrice() * normalCDF(d1) - K * std::exp(-asset->get(Param::riskFreeRate) * T) * normalCDF(d2);
         } else if (option.getType() == OptionType::Put) {
-            return K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(-d2) - asset->getSpotPrice() * normalCDF(-d1);
+            return K * std::exp(-asset->get(Param::riskFreeRate) * T) * normalCDF(-d2) - asset->getSpotPrice() * normalCDF(-d1);
         } else {
             throw std::invalid_argument("Unknown option type.");
         }
@@ -60,8 +60,8 @@ namespace OptionLib::Models {
         auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
-                    (asset->getVolatility() * std::sqrt(T));
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->get(Param::riskFreeRate) + 0.5 * asset->get(Param::volatility) * asset->get(Param::volatility)) * T) /
+                    (asset->get(Param::volatility) * std::sqrt(T));
         if (option.getType() == OptionType::Call) {
             return normalCDF(d1);
         } else {
@@ -73,17 +73,17 @@ namespace OptionLib::Models {
         auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
-                    (asset->getVolatility() * std::sqrt(T));
-        return normalPDF(d1) / (asset->getSpotPrice() * asset->getVolatility() * std::sqrt(T));
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->get(Param::riskFreeRate) + 0.5 * asset->get(Param::volatility) * asset->get(Param::volatility)) * T) /
+                    (asset->get(Param::volatility) * std::sqrt(T));
+        return normalPDF(d1) / (asset->getSpotPrice() * asset->get(Param::volatility) * std::sqrt(T));
     }
 
     double BlackScholes::calculateVega(const Option& option) {
         auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
-                    (asset->getVolatility() * std::sqrt(T));
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->get(Param::riskFreeRate) + 0.5 * asset->get(Param::volatility) * asset->get(Param::volatility)) * T) /
+                    (asset->get(Param::volatility) * std::sqrt(T));
         return asset->getSpotPrice() * normalPDF(d1) * std::sqrt(T);
     }
 
@@ -91,13 +91,13 @@ namespace OptionLib::Models {
         auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() + 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
-                    (asset->getVolatility() * std::sqrt(T));
-        double d2 = d1 - asset->getVolatility() * std::sqrt(T);
+        double d1 = (std::log(asset->getSpotPrice() / K) + (asset->get(Param::riskFreeRate) + 0.5 * asset->get(Param::volatility) * asset->get(Param::volatility)) * T) /
+                    (asset->get(Param::volatility) * std::sqrt(T));
+        double d2 = d1 - asset->get(Param::volatility) * std::sqrt(T);
         if (option.getType() == OptionType::Call) {
-            return -asset->getSpotPrice() * normalPDF(d1) * asset->getVolatility() / (2 * std::sqrt(T)) - asset->getRiskFreeRate() * K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(d2);
+            return -asset->getSpotPrice() * normalPDF(d1) * asset->get(Param::volatility) / (2 * std::sqrt(T)) - asset->get(Param::riskFreeRate) * K * std::exp(-asset->get(Param::riskFreeRate) * T) * normalCDF(d2);
         } else {
-            return -asset->getSpotPrice() * normalPDF(d1) * asset->getVolatility() / (2 * std::sqrt(T)) + asset->getRiskFreeRate() * K * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(-d2);
+            return -asset->getSpotPrice() * normalPDF(d1) * asset->get(Param::volatility) / (2 * std::sqrt(T)) + asset->get(Param::riskFreeRate) * K * std::exp(-asset->get(Param::riskFreeRate) * T) * normalCDF(-d2);
         }
     }
 
@@ -105,19 +105,19 @@ namespace OptionLib::Models {
         auto asset = option.getAsset();
         double K = option.getStrikePrice();
         double T = option.getTimeToExpiry();
-        double d2 = (std::log(asset->getSpotPrice() / K) + (asset->getRiskFreeRate() - 0.5 * asset->getVolatility() * asset->getVolatility()) * T) /
-                    (asset->getVolatility() * std::sqrt(T));
+        double d2 = (std::log(asset->getSpotPrice() / K) + (asset->get(Param::riskFreeRate) - 0.5 * asset->get(Param::volatility) * asset->get(Param::volatility)) * T) /
+                    (asset->get(Param::volatility) * std::sqrt(T));
         if (option.getType() == OptionType::Call) {
-            return K * T * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(d2);
+            return K * T * std::exp(-asset->get(Param::riskFreeRate) * T) * normalCDF(d2);
         } else {
-            return -K * T * std::exp(-asset->getRiskFreeRate() * T) * normalCDF(-d2);
+            return -K * T * std::exp(-asset->get(Param::riskFreeRate) * T) * normalCDF(-d2);
         }
     }
 
     double BlackScholes::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
         auto asset = option.getAsset();
         double optionPrice = price(option);
-        double adjustedVolatility = asset->getVolatility() * std::sqrt(holdingPeriod);
+        double adjustedVolatility = asset->get(Param::volatility) * std::sqrt(holdingPeriod);
 
         // Calculate the Z-score for the specified confidence level
         double zScore = approxErfInv(2 * confidenceLevel - 1) * std::sqrt(2);  // Using Boost's erf_inv
@@ -132,7 +132,7 @@ namespace OptionLib::Models {
         auto asset = option.getAsset();
         // Mean Excess Loss beyond VaR
         double optionPrice = price(option);
-        double adjustedVolatility = asset->getVolatility() * std::sqrt(holdingPeriod);
+        double adjustedVolatility = asset->get(Param::volatility) * std::sqrt(holdingPeriod);
 
         // Expected Shortfall calculation (adjusted for Black-Scholes assumptions)
         double meanExcessLoss = optionPrice * adjustedVolatility * approxErfInv(2 * confidenceLevel - 1) / std::sqrt(M_PI);

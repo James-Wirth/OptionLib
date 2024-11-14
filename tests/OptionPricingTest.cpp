@@ -15,7 +15,9 @@ TEST(OptionPricingTest, ModelComparison) {
     double strikePrice = 100.0;
     double timeToExpiry = 1.0;
 
-    auto asset = std::make_shared<Asset>("AAPL", 100.0, 0.2, 0.05);
+    auto asset = std::make_shared<Asset>("AAPL", 100.0);
+    asset->set(Param::volatility, 0.2);
+    asset->set(Param::riskFreeRate, 0.05);
 
     Option callOption = Option(asset, strikePrice, timeToExpiry, OptionType::Call);
     Option putOption = Option(asset, strikePrice, timeToExpiry, OptionType::Put);

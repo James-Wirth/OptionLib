@@ -7,26 +7,31 @@
 
 namespace OptionLib {
 
+    // Define possible parameter keys as an enum
+    enum class Param {
+        volatility,
+        riskFreeRate,
+        meanReversion,
+        volOfVol,
+        longTermVariance
+    };
+
     class Asset {
     public:
-        Asset(std::string id, double spotPrice, double volatility, double riskFreeRate);
+        Asset(std::string id, double spotPrice);
 
         // Getters
         [[nodiscard]] std::string getId() const;
         [[nodiscard]] double getSpotPrice() const;
-        [[nodiscard]] double getVolatility() const;
-        [[nodiscard]] double getRiskFreeRate() const;
 
-        // Setters (for updating values if needed)
-        void setSpotPrice(double newPrice);
-        void setVolatility(double newVolatility);
-        void setRiskFreeRate(double newRate);
+        // Optional parameters setters and getters
+        void set(Param param, double value);
+        [[nodiscard]] double get(Param param) const;
 
     private:
         std::string id;          // Unique identifier for the asset (e.g., ticker symbol)
         double spotPrice;
-        double volatility;
-        double riskFreeRate;
+        std::unordered_map<Param, double> parameters;
     };
 
 } // namespace OptionLib

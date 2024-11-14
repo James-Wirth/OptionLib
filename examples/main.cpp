@@ -21,14 +21,16 @@ inline std::string greekTypeName(GreekType greekType) {
 using namespace OptionLib;
 
 int main() {
-    ModelSP defaultModel = Factory::makeSharedModel<Binomial>();
-    Portfolio portfolio(defaultModel);
-
-    AssetSP asset = Factory::makeSharedAsset("AAPL", 100.0, 0.2, 0.05);
+    AssetSP asset = Factory::makeSharedAsset("AAPL", 100.0);
+    asset->set(Param::volatility, 0.2);
+    asset->set(Param::riskFreeRate, 0.05);
 
     OptionSP callOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Call);
     OptionSP putOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Put);
 
+    ModelSP defaultModel = Factory::makeSharedModel<MonteCarlo>();
+
+    Portfolio portfolio(defaultModel);
     portfolio.addOption(callOption);
     portfolio.addOption(putOption);
 

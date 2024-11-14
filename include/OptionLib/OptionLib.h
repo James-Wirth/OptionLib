@@ -37,8 +37,8 @@ namespace OptionLib {
             return std::make_shared<Option>(asset, strike, expiry, type);
         }
 
-        static std::shared_ptr<Asset> makeSharedAsset(std::string id, double spotPrice, double volatility, double riskFreeRate) {
-            return std::make_shared<Asset>(id, spotPrice, volatility, riskFreeRate);
+        static std::shared_ptr<Asset> makeSharedAsset(std::string id, double spotPrice) {
+            return std::make_shared<Asset>(id, spotPrice);
         }
     };
     using OptionLib::Factory;

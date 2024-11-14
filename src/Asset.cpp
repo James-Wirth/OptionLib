@@ -7,8 +7,8 @@
 
 namespace OptionLib {
 
-    Asset::Asset(std::string id, double spotPrice, double volatility, double riskFreeRate)
-        : id(std::move(id)), spotPrice(spotPrice), volatility(volatility), riskFreeRate(riskFreeRate) {}
+    Asset::Asset(std::string id, double spotPrice)
+        : id(std::move(id)), spotPrice(spotPrice) {}
 
     std::string Asset::getId() const {
         return id;
@@ -18,24 +18,20 @@ namespace OptionLib {
         return spotPrice;
     }
 
-    double Asset::getVolatility() const {
-        return volatility;
+    // Optional parameter setters and getters
+    void Asset::set(Param param, double value) {
+        parameters[param] = value;
     }
 
-    double Asset::getRiskFreeRate() const {
-        return riskFreeRate;
+    double Asset::get(Param param) const {
+        auto it = parameters.find(param);
+        if (it != parameters.end()) {
+            return it->second;
+        } else {
+            throw std::runtime_error("Parameter not found");
+        }
     }
 
-    void Asset::setSpotPrice(double newPrice) {
-        spotPrice = newPrice;
-    }
 
-    void Asset::setVolatility(double newVolatility) {
-        volatility = newVolatility;
-    }
-
-    void Asset::setRiskFreeRate(double newRate) {
-        riskFreeRate = newRate;
-    }
 
 } // namespace OptionLib
