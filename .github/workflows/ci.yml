@@ -15,28 +15,44 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install CMake
+      # Step 2: Install CMake on Linux
+      - name: Install CMake on Linux
+        if: runner.os == 'Linux'
         run: |
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            sudo apt-get update && sudo apt-get install -y wget
-            wget https://github.com/Kitware/CMake/releases/download/v3.29.0/cmake-3.29.0-linux-x86_64.sh
-            sudo mkdir /opt/cmake
-            sudo sh cmake-3.29.0-linux-x86_64.sh --skip-license --prefix=/opt/cmake
-            echo "/opt/cmake/bin" >> $GITHUB_PATH
-          elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            brew install cmake
-          elif [[ "$RUNNER_OS" == "Windows" ]]; then
-            choco install cmake --version=3.29.0 -y
-          fi
+          sudo apt-get update && sudo apt-get install -y wget
+          wget https://github.com/Kitware/CMake/releases/download/v3.29.0/cmake-3.29.0-linux-x86_64.sh
+          sudo mkdir /opt/cmake
+          sudo sh cmake-3.29.0-linux-x86_64.sh --skip-license --prefix=/opt/cmake
+          echo "/opt/cmake/bin" >> $GITHUB_PATH
+        shell: bash
 
+      # Step 2: Install CMake on macOS
+      - name: Install CMake on macOS
+        if: runner.os == 'macOS'
+        run: brew install cmake
+        shell: bash
+
+      # Step 2: Install CMake on Windows
+      - name: Install CMake on Windows
+        if: runner.os == 'Windows'
+        run: choco install cmake --version=3.29.0 -y
+        shell: powershell
+
+      # Step 3: Configure with CMake
       - name: Configure with CMake
         run: cmake -S . -B build
+        shell: bash
 
+      # Step 4: Build the project
       - name: Build with CMake
         run: cmake --build build
+        shell: bash
 
+      # Step 5: Run tests
       - name: Run tests
         run: ctest --output-on-failure --build-config Debug --test-dir build
+        shell: bash
