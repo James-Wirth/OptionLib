@@ -27,6 +27,18 @@ cmake ..
 make
 ```
 
+To install the library and the executables, run:
+
+```bash
+make install
+```
+
+Run the unit tests with:
+
+```bash
+ctest
+```
+
 ## Usage
 
 Here is a simple usage that demonstrates setting up a portfolio with call and put options:
