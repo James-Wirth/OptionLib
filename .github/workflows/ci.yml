@@ -18,49 +18,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Install CMake on Linux
       - name: Install CMake on Linux
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update && sudo apt-get install -y wget
-          wget https://github.com/Kitware/CMake/releases/download/v3.29.0/cmake-3.29.0-linux-x86_64.sh
-          sudo mkdir /opt/cmake
-          sudo sh cmake-3.29.0-linux-x86_64.sh --skip-license --prefix=/opt/cmake
-          echo "/opt/cmake/bin" >> $GITHUB_PATH
-        shell: bash
-
-      # Install CMake on macOS
-      - name: Install CMake on macOS
-        if: runner.os == 'macOS'
-        run: brew install cmake
-        shell: bash
-
-      # Install CMake on Windows
-      - name: Install CMake on Windows
-        if: runner.os == 'Windows'
-        run: choco install cmake --version=3.29.0 -y
-        shell: powershell
-
-      # Configure CMake (Debug mode for consistency)
-      - name: Configure with CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
-
-      # Build with CMake, specifying Debug config on Windows
-      - name: Build with CMake
-        run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            cmake --build build --config Debug
-          else
-            cmake --build build
-          fi
-        shell: bash
-
-      # Run tests with Debug configuration on Windows
-      - name: Run tests
-        run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            ctest --output-on-failure --test-dir build --build-config Debug
-          else
-            ctest --output-on-failure --test-dir build
-          fi
-        shell: bash
+          wget htt
