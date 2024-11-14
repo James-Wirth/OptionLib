@@ -120,11 +120,11 @@ namespace OptionLib::Models {
     }
 
     double Binomial::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
-        return 0.0;
+        throw std::logic_error("Binomial::VaR is not yet implemented.");
     }
 
     double Binomial::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
-        return 0.0;
+        throw std::logic_error("Binomial::ExpectedShortfall is not yet implemented.");
     }
 
 } // namespace OptionLib::Models

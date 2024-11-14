@@ -121,11 +121,11 @@ namespace OptionLib::Models {
     }
 
     double MonteCarlo::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
-        return 0.0;
+        throw std::logic_error("MonteCarlo::VaR is not yet implemented.");
     }
 
     double MonteCarlo::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
-        return 0.0;
+        throw std::logic_error("MonteCarlo::ExpectedShortfall is not yet implemented.");
     }
 
 } // namespace OptionLib::Models
