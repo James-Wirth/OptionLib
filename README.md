@@ -38,15 +38,13 @@ using namespace OptionLib;
 spotPrice = 100.0;
 riskFreeRate = 0.05;
 volatility = 0.2;
-ModelSP model = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, timeToMaturity);
+AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice, riskFreeRate, volatility);
 
 strikePrice = 100.0;
 timeToMaturity = 1.0;
-OptionSP callOption = Factory::createOption(strikePrice, timeToMaturity, OptionType::Call);
+OptionSP callOption = Factory::createOption(asset, strikePrice, timeToMaturity, OptionType::Call);
 
-// Create portfolio with default model type <BlackScholes>
-// and add the option
-
+ModelSP model = Factory::createModel<BlackScholes>(spotPrice, riskFreeRate, timeToMaturity);
 Portfolio portfolio(model);
 portfolio.addOption(callOption);
 ```
