@@ -30,7 +30,7 @@ ctest
 
 ## Usage
 
-Here is a simple usage that demonstrates setting up a portfolio with a single call option. The `Factory::` patern allows you to make `std::shared_ptr` objects for clean memory management. 
+Here is a simple usage that demonstrates setting up a portfolio with a single call option. The `Factory::` pattern allows you to make `std::shared_ptr` objects for clean memory management. 
 
 ```cpp
 using namespace OptionLib;
