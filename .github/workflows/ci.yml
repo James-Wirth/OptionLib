@@ -15,11 +15,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      # Step 1: Check out the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Install CMake on Linux
+      # Install CMake on Linux
       - name: Install CMake on Linux
         if: runner.os == 'Linux'
         run: |
@@ -30,29 +29,38 @@ jobs:
           echo "/opt/cmake/bin" >> $GITHUB_PATH
         shell: bash
 
-      # Step 2: Install CMake on macOS
+      # Install CMake on macOS
       - name: Install CMake on macOS
         if: runner.os == 'macOS'
         run: brew install cmake
         shell: bash
 
-      # Step 2: Install CMake on Windows
+      # Install CMake on Windows
       - name: Install CMake on Windows
         if: runner.os == 'Windows'
         run: choco install cmake --version=3.29.0 -y
         shell: powershell
 
-      # Step 3: Configure with CMake
+      # Configure CMake (Debug mode for consistency)
       - name: Configure with CMake
-        run: cmake -S . -B build
-        shell: bash
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
-      # Step 4: Build the project
+      # Build with CMake, specifying Debug config on Windows
       - name: Build with CMake
-        run: cmake --build build
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            cmake --build build --config Debug
+          else
+            cmake --build build
+          fi
         shell: bash
 
-      # Step 5: Run tests
+      # Run tests with Debug configuration on Windows
       - name: Run tests
-        run: ctest --output-on-failure --build-config Debug --test-dir build
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            ctest --output-on-failure --test-dir build --build-config Debug
+          else
+            ctest --output-on-failure --test-dir build
+          fi
         shell: bash
