@@ -4,6 +4,7 @@
 
 #include <OptionLib/Option.h>
 #include <stdexcept>
+#include <memory>
 
 namespace OptionLib {
 

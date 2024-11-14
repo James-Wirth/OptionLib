@@ -12,10 +12,10 @@ namespace OptionLib {
         Asset(std::string id, double spotPrice, double volatility, double riskFreeRate);
 
         // Getters
-        std::string getId() const;
-        double getSpotPrice() const;
-        double getVolatility() const;
-        double getRiskFreeRate() const;
+        [[nodiscard]] std::string getId() const;
+        [[nodiscard]] double getSpotPrice() const;
+        [[nodiscard]] double getVolatility() const;
+        [[nodiscard]] double getRiskFreeRate() const;
 
         // Setters (for updating values if needed)
         void setSpotPrice(double newPrice);

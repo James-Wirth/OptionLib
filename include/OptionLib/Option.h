@@ -6,6 +6,7 @@
 #define OPTION_H
 
 #include <string>
+#include <memory>
 #include "Asset.h"
 
 namespace OptionLib {
