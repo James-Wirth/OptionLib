@@ -65,7 +65,7 @@ portfolio.addOption(callOption);
 Calculate the value of the Greeks for each option in the portfolio. For example, for the $\Delta$,
 
 ```cpp
-portfolio.greekVector(GreekType::Delta)
+... = portfolio.greekVector(GreekType::Delta)
 ```
 
 ### Risk Analysis:
@@ -73,11 +73,11 @@ portfolio.greekVector(GreekType::Delta)
 Calculate the value at risk (VaR) and the expected shortfall (ES).
 
 ```cpp
-portfolio.VaR(confidenceLevel, holdingPeriod);
+... = portfolio.VaR(confidenceLevel, holdingPeriod);
 ```
 
 ```cpp
-portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);
+... = portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);
 ```
 
 
