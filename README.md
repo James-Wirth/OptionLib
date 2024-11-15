@@ -35,18 +35,29 @@ Here is a simple usage that demonstrates setting up a portfolio with a single ca
 ```cpp
 using namespace OptionLib;
 
+// Define the asset and set its key features
 double spotPrice = 100.0;
-AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice)
-asset->set(Param::volatility, 0.2);
-asset->set(Param::riskFreeRate, 0.05);
+AssetSP asset = Factory::makeSharedAsset("AAPL", spotPrice);
+asset->set(Param::volatility, 0.2);     
+asset->set(Param::riskFreeRate, 0.05);  
 
+// Create a call option
 double strikePrice = 100.0;
-double timeToMaturity = 1.0;
-OptionSP callOption = Factory::makeSharedOption(asset, strikePrice, timeToMaturity, OptionType::Call);
+double timeToMaturity = 1.0;  // Time to maturity: 1 year
+OptionSP callOption = Factory::makeSharedOption(
+    asset, 
+    strikePrice, 
+    timeToMaturity, 
+    OptionType::Call
+);
 
+// Initialize a Black-Scholes model
 ModelSP model = Factory::makeSharedModel<BlackScholes>();
+
+// Build the portfolio and add the option
 Portfolio portfolio(model);
 portfolio.addOption(callOption);
+
 ```
 
 ### Greeks Calculation:
@@ -54,16 +65,7 @@ portfolio.addOption(callOption);
 Calculate the value of the Greeks for each option in the portfolio. For example, for the $\Delta$,
 
 ```cpp
-auto greekVector = portfolio.greekVector(GreekType::Delta)
-```
-
-### Portfolio Value and Concentration:
-
-Calculate the total value of the portfolio and its concentration among the held options:
-
-```cpp
-double portfolioValue = portfolio.totalValue()
-auto concentrations = portfolio.concentrationMeasures();
+portfolio.greekVector(GreekType::Delta)
 ```
 
 ### Risk Analysis:
@@ -71,11 +73,11 @@ auto concentrations = portfolio.concentrationMeasures();
 Calculate the value at risk (VaR) and the expected shortfall (ES).
 
 ```cpp
-double confidenceLevel = 0.95;
-double holdingTime = 1.0/52;
+portfolio.VaR(confidenceLevel, holdingPeriod);
+```
 
-double portfolioVaR = portfolio.VaR(confidenceLevel, holdingPeriod);
-double portfolioES = portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);;
+```cpp
+portfolio.ExpectedShortfall(confidenceLevel, holdingPeriod);
 ```
 
 
