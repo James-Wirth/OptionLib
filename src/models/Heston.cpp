@@ -7,14 +7,10 @@
 #include <complex>
 #include <vector>
 #include <stdexcept>
-#include <boost/math/quadrature/trapezoidal.hpp>
-#include <boost/math/constants/constants.hpp>
-#include <Eigen/Dense>
 #include <iostream>
 
 namespace OptionLib::Models {
-
-    using namespace Eigen;
+    
     using namespace std::complex_literals;
 
     std::complex<double> Heston::characteristicFunction(const std::complex<double>& u, const Option& option, const Asset& asset) {

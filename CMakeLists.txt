@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
 project(OptionLib)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -45,14 +45,6 @@ if (Boost_FOUND)
     target_link_libraries(OptionLib PUBLIC ${Boost_LIBRARIES})
     message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
     message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
-endif()
-
-find_package(Eigen3 REQUIRED NO_MODULE)
-if (Eigen3_FOUND)
-    target_link_libraries(OptionLib PUBLIC Eigen3::Eigen)
-    message(STATUS "Eigen3 found: ${Eigen3_INCLUDE_DIRS}")
-else()
-    message(FATAL_ERROR "Eigen3 not found")
 endif()
 
 # Define a test executable for GTest-based tests
