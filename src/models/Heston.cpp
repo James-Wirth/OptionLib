@@ -19,31 +19,30 @@ namespace OptionLib::Models {
         // Retrieve parameters
         double kappa = asset.get(Param::meanReversion);
         double theta = asset.get(Param::longTermVariance);
-        double sigma = asset.get(Param::volOfVol);
+        double zeta = asset.get(Param::volOfVol);
         double rho = asset.get(Param::hestonCorrelation);
         double v0 = asset.get(Param::volatility) * asset.get(Param::volatility);
         double r = asset.get(Param::riskFreeRate);
         double T = option.getTimeToExpiry();
         double S = asset.getSpotPrice();
+        std::complex i(0.0, 1.0);
 
-        std::complex<double> i = 1i;
-        std::complex<double> alpha = -u * u * 0.5 - i * u * 0.5;
-        std::complex<double> beta = kappa - rho * sigma * i * u;
-        std::complex<double> gamma = sigma * sigma * 0.5;
+        double m = std::log(S) + r * T;
+        std::complex<double> D = std::sqrt(
+            std::pow(rho * zeta * 1i * u - kappa, 2) + std::pow(zeta, 2) * (1i * u + std::pow(u, 2)));
+        std::complex<double> C = (kappa - rho*zeta*1i*u - D)/(kappa-rho*zeta*1i*u + D);
 
-        std::complex<double> D = std::sqrt(beta * beta - 4.0 * alpha * gamma);
-        std::complex<double> G = (beta - D) / (beta + D);
+        std::complex<double> beta = ((kappa - rho*zeta*1i*u - D)*(1.0-std::exp(-D*T))) / (std::pow(zeta,2)*(1.0-C*std::exp(-D*T)));
+        std::complex<double> alpha = ((kappa*theta)/(std::pow(zeta,2))) * ((kappa-rho*zeta*1i*u-D)*T - 2.0*std::log((1.0-C*std::exp(-D*T))/(1.0-C)));
 
-        std::complex<double> C = r * i * u * T + (kappa * theta / (sigma * sigma)) * ((beta - D) * T - 2.0 * std::log((1.0 - G * std::exp(-D * T)) / (1.0 - G)));
-        std::complex<double> D_term = ((beta - D) / (sigma * sigma)) * ((1.0 - std::exp(-D * T)) / (1.0 - G * std::exp(-D * T)));
-
-        return std::exp(C + D_term * v0 + i * u * std::log(S));
+        return std::exp(1i*u*m + alpha + beta*v0);
     }
 
 
     double Heston::price(const Option& option) const {
         return 0.0;
     }
+
 
 
     double Heston::computeGreek(const Option& option, GreekType greekType) const {

@@ -24,20 +24,20 @@ int main() {
     AssetSP asset = Factory::makeSharedAsset("AAPL", 100.0);
 
     asset->set(Param::volatility, 0.2);
-    asset->set(Param::riskFreeRate, 0.05);
-    asset->set(Param::meanReversion, 1.0);
-    asset->set(Param::volOfVol, 0.3);
+    asset->set(Param::riskFreeRate, 0.03);
+    asset->set(Param::meanReversion, 2.0);
+    asset->set(Param::volOfVol, 0.2);
     asset->set(Param::longTermVariance, 0.04);
-    asset->set(Param::hestonCorrelation, -0.4);
+    asset->set(Param::hestonCorrelation, -0.7);
 
     OptionSP callOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Call);
-    OptionSP putOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Put);
+    // OptionSP putOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Put);
 
     ModelSP defaultModel = Factory::makeSharedModel<Heston>();
 
     Portfolio portfolio(defaultModel);
     portfolio.addOption(callOption);
-    portfolio.addOption(putOption);
+    // portfolio.addOption(putOption);
 
     // Output the total portfolio value
     double portfolioValue = portfolio.totalValue();
