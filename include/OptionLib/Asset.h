@@ -15,7 +15,8 @@ namespace OptionLib {
         riskFreeRate,
         meanReversion,
         volOfVol,
-        longTermVariance
+        longTermVariance,
+        hestonCorrelation,
     };
 
     class Asset {

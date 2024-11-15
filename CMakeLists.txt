@@ -15,8 +15,7 @@ add_library(OptionLib STATIC ${LIBRARY_SOURCES})
 target_include_directories(OptionLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Example executable for testing
-add_executable(example examples/main.cpp
-        include/OptionLib/Asset.h)
+add_executable(example examples/main.cpp)
 
 # Link the library to the example executable
 target_link_libraries(example PRIVATE OptionLib)
@@ -40,10 +39,28 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # Fetch and link Google Test
 FetchContent_MakeAvailable(googletest)
 
+find_package(Boost REQUIRED)  # Do not specify components for Boost.Math
+if (Boost_FOUND)
+    target_include_directories(OptionLib PUBLIC ${Boost_INCLUDE_DIRS})
+    target_link_libraries(OptionLib PUBLIC ${Boost_LIBRARIES})
+    message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
+    message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
+endif()
+
+find_package(Eigen3 REQUIRED NO_MODULE)
+if (Eigen3_FOUND)
+    target_link_libraries(OptionLib PUBLIC Eigen3::Eigen)
+    message(STATUS "Eigen3 found: ${Eigen3_INCLUDE_DIRS}")
+else()
+    message(FATAL_ERROR "Eigen3 not found")
+endif()
+
 # Define a test executable for GTest-based tests
-add_executable(run_tests tests/OptionPricingTest.cpp)
+add_executable(run_tests tests/OptionPricingTest.cpp
+                         tests/HestonCharacteristicFunctionTest.cpp)
+
 target_link_libraries(run_tests PRIVATE OptionLib gtest gtest_main)
-add_test(NAME OptionPricingTest COMMAND run_tests)
+add_test(NAME OptionLibTests COMMAND run_tests)
 
 # Install library, headers, and executables
 install(TARGETS OptionLib DESTINATION lib)

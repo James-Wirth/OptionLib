@@ -11,6 +11,7 @@
 #include <OptionLib/models/BlackScholes.h>
 #include <OptionLib/models/MonteCarlo.h>
 #include <OptionLib/models/Binomial.h>
+#include <OptionLib/models/Heston.h>
 #include <OptionLib/Portfolio.h>
 
 // Type aliases for shared pointer
@@ -22,6 +23,7 @@ namespace OptionLib {
     using Models::Binomial;
     using Models::BlackScholes;
     using Models::MonteCarlo;
+    using Models::Heston;
     using Models::GreekType;
 
     class Factory {
