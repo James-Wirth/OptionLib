@@ -10,7 +10,7 @@
 #include <iostream>
 
 namespace OptionLib::Models {
-    
+
     using namespace std::complex_literals;
 
     std::complex<double> Heston::characteristicFunction(const std::complex<double>& u, const Option& option, const Asset& asset) {

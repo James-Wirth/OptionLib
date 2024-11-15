@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
 project(OptionLib)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -38,14 +38,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 # Fetch and link Google Test
 FetchContent_MakeAvailable(googletest)
-
-find_package(Boost REQUIRED)  # Do not specify components for Boost.Math
-if (Boost_FOUND)
-    target_include_directories(OptionLib PUBLIC ${Boost_INCLUDE_DIRS})
-    target_link_libraries(OptionLib PUBLIC ${Boost_LIBRARIES})
-    message(STATUS "Boost include dirs: ${Boost_INCLUDE_DIRS}")
-    message(STATUS "Boost libraries: ${Boost_LIBRARIES}")
-endif()
 
 # Define a test executable for GTest-based tests
 add_executable(run_tests tests/OptionPricingTest.cpp
