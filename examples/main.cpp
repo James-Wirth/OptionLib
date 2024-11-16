@@ -31,13 +31,13 @@ int main() {
     asset->set(Param::hestonCorrelation, -0.7);
 
     OptionSP callOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Call);
-    // OptionSP putOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Put);
+    OptionSP putOption = Factory::makeSharedOption(asset, 100, 1.0, OptionType::Put);
 
     ModelSP defaultModel = Factory::makeSharedModel<Heston>();
 
     Portfolio portfolio(defaultModel);
     portfolio.addOption(callOption);
-    // portfolio.addOption(putOption);
+    portfolio.addOption(putOption);
 
     // Output the total portfolio value
     double portfolioValue = portfolio.totalValue();

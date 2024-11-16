@@ -5,45 +5,74 @@
 #include "OptionLib/models/Heston.h"
 #include <cmath>
 #include <complex>
-#include <vector>
 #include <stdexcept>
 #include <iostream>
 
 namespace OptionLib::Models {
 
+    using namespace std;
     using namespace std::complex_literals;
+
+    // Convenience function for necessary Heston parameters
+    auto getHestonParameters(const Asset& asset, const Option& option) {
+        return std::make_tuple(
+            asset.get(Param::meanReversion),                                // kappa
+            asset.get(Param::longTermVariance),                             // theta
+            asset.get(Param::volOfVol),                                     // zeta
+            asset.get(Param::hestonCorrelation),                            // rho
+            asset.get(Param::volatility) * asset.get(Param::volatility),    // v0
+            asset.get(Param::riskFreeRate),                                 // r
+            option.getTimeToExpiry(),                                       // T
+            option.getStrikePrice(),                                        // K
+            asset.getSpotPrice()                                            // S
+        );
+    }
 
     std::complex<double> Heston::characteristicFunction(const std::complex<double>& u, const Option& option, const Asset& asset) {
         using namespace std::complex_literals;
-
-        // Retrieve parameters
-        double kappa = asset.get(Param::meanReversion);
-        double theta = asset.get(Param::longTermVariance);
-        double zeta = asset.get(Param::volOfVol);
-        double rho = asset.get(Param::hestonCorrelation);
-        double v0 = asset.get(Param::volatility) * asset.get(Param::volatility);
-        double r = asset.get(Param::riskFreeRate);
-        double T = option.getTimeToExpiry();
-        double S = asset.getSpotPrice();
-        std::complex i(0.0, 1.0);
-
-        double m = std::log(S) + r * T;
-        std::complex<double> D = std::sqrt(
-            std::pow(rho * zeta * 1i * u - kappa, 2) + std::pow(zeta, 2) * (1i * u + std::pow(u, 2)));
-        std::complex<double> C = (kappa - rho*zeta*1i*u - D)/(kappa-rho*zeta*1i*u + D);
-
-        std::complex<double> beta = ((kappa - rho*zeta*1i*u - D)*(1.0-std::exp(-D*T))) / (std::pow(zeta,2)*(1.0-C*std::exp(-D*T)));
-        std::complex<double> alpha = ((kappa*theta)/(std::pow(zeta,2))) * ((kappa-rho*zeta*1i*u-D)*T - 2.0*std::log((1.0-C*std::exp(-D*T))/(1.0-C)));
-
-        return std::exp(1i*u*m + alpha + beta*v0);
+        auto [kappa, theta, zeta, rho, v0, r, T, K, S] = getHestonParameters(asset, option);
+        double m = log(S) + r * T;
+        complex<double> D = sqrt(pow(rho * zeta * 1i * u - kappa, 2) + pow(zeta, 2) * (1i * u + pow(u, 2)));
+        complex<double> C = (kappa - rho*zeta*1i*u - D)/(kappa-rho*zeta*1i*u + D);
+        complex<double> beta = ((kappa - rho*zeta*1i*u - D)*(1.0-exp(-D*T))) / (pow(zeta,2)*(1.0-C*exp(-D*T)));
+        complex<double> alpha = ((kappa*theta)/(pow(zeta,2))) * ((kappa-rho*zeta*1i*u-D)*T - 2.0*log((1.0-C*exp(-D*T))/(1.0-C)));
+        return exp(1i*u*m + alpha + beta*v0);
     }
 
-
+    // Fourier implementation of Heston price
     double Heston::price(const Option& option) const {
-        return 0.0;
+        double z = 24;
+        double N = 1021;
+        auto [kappa, theta, zeta, rho, v0, r, T, K, S] = getHestonParameters(*option.getAsset(), option);
+        double c1 = log(S) + r * T - 0.5 * theta * T;
+        double c2 = theta / (8 * pow(kappa, 3)) *
+                    (-pow(zeta, 2) * exp(-2 * kappa * T)
+                     + 4 * zeta * exp(-kappa * T) * (zeta - 2 * kappa * rho)
+                     + 2 * kappa * T * (4 * pow(kappa, 2) + pow(zeta, 2) - 4 * kappa * zeta * rho)
+                     + zeta * (8 * kappa * rho - 3 * zeta));
+
+        double a = c1 - z * sqrt(abs(c2));
+        double b = c1 + z * sqrt(abs(c2));
+        auto h = [&](int n) { return (n * M_PI) / (b - a); };
+        auto g_n = [&](int n) {
+            double h_n = h(n);
+            return (exp(a) - (K / h_n) * sin(h_n * (a - log(K))) - K * cos(h_n * (a - log(K)))) / (1 + pow(h_n, 2));
+        };
+        double g0 = K * (log(K) - a - 1) + exp(a);
+
+        complex F = g0;
+        for (int n = 1; n <= N; ++n) {
+            double h_n = h(n);
+            F += 2.0 * characteristicFunction(h_n, option, *option.getAsset()) * exp(complex<double>(0, -1) * a * h_n) * g_n(n);
+        }
+        double F_real = exp(-r * T) / (b - a) * real(F);
+
+        if (option.getType() == OptionType::Call) {
+            // Put-call parity
+            F_real += S - K * exp(-r * T);
+        }
+        return max(0.0, F_real);
     }
-
-
 
     double Heston::computeGreek(const Option& option, GreekType greekType) const {
         switch (greekType) {
