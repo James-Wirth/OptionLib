@@ -92,38 +92,31 @@ namespace OptionLib::Models {
     }
 
     double Heston::VaR(const Option& option, double confidenceLevel, double holdingPeriod) const {
-        // Simulate paths and calculate VaR based on option payoff
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::VaR is not yet implemented.");
     }
 
     double Heston::ExpectedShortfall(const Option& option, double confidenceLevel, double holdingPeriod) const {
-        // Simulate paths and calculate Expected Shortfall based on option payoff
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::ExpectedShortfall is not yet implemented.");
     }
 
     double Heston::calculateDelta(const Option& option) {
-        // Approximate or calculate delta using finite differences or formula
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::calculateDelta is not yet implemented.");
     }
 
     double Heston::calculateGamma(const Option& option) {
-        // Approximate or calculate gamma using finite differences or formula
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::calculateGamma is not yet implemented.");
     }
 
     double Heston::calculateVega(const Option& option) {
-        // Approximate or calculate vega using finite differences or formula
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::calculateVega is not yet implemented.");
     }
 
     double Heston::calculateTheta(const Option& option) {
-        // Approximate or calculate theta using finite differences or formula
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::calculateTheta is not yet implemented.");
     }
 
     double Heston::calculateRho(const Option& option) {
-        // Approximate or calculate rho using finite differences or formula
-        return 0.0; // Placeholder
+        throw std::logic_error("Heston::calculateRho is not yet implemented.");
     }
 
 } // namespace OptionLib::Models
